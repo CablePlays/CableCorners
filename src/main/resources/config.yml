@@ -1,0 +1,15 @@
+# ---------------------------------------------------------------------------------------------------- #
+#
+#     CableCorners config.yml
+#
+# ----------( Information )---------- #
+#
+#   > A list of sounds can be found here:
+#     https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html
+#
+# ---------------------------------------------------------------------------------------------------- #
+
+countdown-message: # Placeholders: {s} {seconds}
+  - "You have {seconds} second{s} to chose a platform!"
+destroy-message: # Placeholders: {platform}
+  - "{platform} &rwas destroyed!"

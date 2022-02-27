@@ -1,0 +1,43 @@
+# ---------------------------------------------------------------------------------------------------- #
+#
+#     CableCorners messages.yml
+#
+# ----------( Information )---------- #
+#
+#   > A list of sounds can be found here:
+#     https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html
+#
+# ---------------------------------------------------------------------------------------------------- #
+
+command:
+  cablecorners:
+    create:
+      - "Created new venue at your location."
+    help: # {command}
+      - "/{command} Shows information about the plugin"
+      - "/{command} help Shows this message"
+      - "/{command} reload Reloads the plugin"
+      - "" # TODO
+    information: # {author} {command} {name} {version}
+      - "Server running {name} v{version} by {author}"
+      - "Commands: /{command} help"
+    menu:
+      no-venues:
+        - "No venues have been created!"
+      open: []
+    reload:
+      - "Configuration files reloaded successfully."
+    unknown-command: # {command}
+      - "Unknown sub-command. Type \"/{command} help\" for a list of commands."
+    venues:
+      help: # {command}
+        - "/{command} venues load"
+        - "/{command} venues save"
+      load:
+        - "Venues have been loaded from configuration."
+      save:
+        - "Venues have been saved to configuration."
+
+error:
+  only-player:
+    - "Only players may use this command!"

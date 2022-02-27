@@ -1,0 +1,29 @@
+0:
+  active: false
+
+  platform-size: 4
+  platform-space: 2
+
+  x: 0
+  y: 0
+  z: 0
+  world: "world"
+
+  durations:
+    countdown: 10
+    elimination: 5
+    replacement: 5
+
+  platforms:
+    1:
+      material: BLUE_CONCRETE
+      name: "Blue"
+    2:
+      material: RED_CONCRETE
+      name: "Red"
+    3:
+      material: LIME_CONCRETE
+      name: "Green"
+    4:
+      material: YELLOW_CONCRETE
+      name: "Yellow"
