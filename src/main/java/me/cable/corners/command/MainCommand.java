@@ -6,7 +6,6 @@ import me.cable.corners.component.region.Coords;
 import me.cable.corners.component.region.Venue;
 import me.cable.corners.handler.Messages;
 import me.cable.corners.handler.SaveHandler;
-import me.cable.corners.handler.Settings;
 import me.cable.corners.manager.VenueManager;
 import me.cable.corners.menu.AbstractMenu;
 import me.cable.corners.menu.EditingMenu;
@@ -24,14 +23,12 @@ import java.util.List;
 public class MainCommand implements CommandExecutor, TabCompleter {
 
     private final CableCorners cableCorners;
-    private final Settings settings;
     private final Messages messages;
     private final SaveHandler saveHandler;
 
     public MainCommand(@NotNull CableCorners cableCorners) {
         this.cableCorners = cableCorners;
 
-        settings = cableCorners.getSettings();
         messages = cableCorners.getMessages();
         saveHandler = cableCorners.getSaveHandler();
     }
@@ -69,7 +66,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
                 }
 
                 Block centre = player.getLocation().getBlock();
-                Venue venue = new Venue(VenueManager.getNextFreeId(), 4, 1, Coords.fromBlock(centre), centre.getWorld().getName(), null);
+                Venue venue = new Venue(VenueManager.getNextFreeId(), 3, 3, Coords.fromBlock(centre), centre.getWorld().getName(), null);
                 VenueManager.registerVenue(venue);
 
                 message("create").send(sender);
@@ -82,7 +79,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 
                 for (Venue venue : VenueManager.getVenues()) {
                     if (venue.contains(player)) {
-                        new EditingMenu(player, venue, cableCorners).open();
+                        new EditingMenu(player, venue, false, cableCorners).open();
                         return true;
                     }
                 }
@@ -99,29 +96,27 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 
                 message("load").send(sender);
             }
-            case "menu" -> {
-                if (sender instanceof Player player) {
-                    List<Venue> list = VenueManager.getVenues();
-
-                    if (list.isEmpty()) {
-                        message("menu.no-venues").send(sender);
-                    } else {
-                        new SelectionMenu(player, list.get(0), cableCorners).open();
-                        message("menu.open").send(sender);
-                    }
-                } else {
-                    messages.message("error.only-player").send(sender);
-                }
-            }
             case "reload" -> {
-                settings.load();
                 messages.load();
-
                 message("reload").send(sender);
             }
             case "save" -> {
                 saveHandler.saveVenues();
-                message("venues.save").send(sender);
+                message("save").send(sender);
+            }
+            case "venues" -> {
+                if (sender instanceof Player player) {
+                    List<Venue> list = VenueManager.getVenues();
+
+                    if (list.isEmpty()) {
+                        message("venues.no-venues").send(sender);
+                    } else {
+                        new SelectionMenu(player, list.get(0), cableCorners).open();
+                        message("venues.open").send(sender);
+                    }
+                } else {
+                    messages.message("error.only-player").send(sender);
+                }
             }
             default -> message("unknown-command").placeholder("{command}", label).send(sender);
         }
@@ -139,7 +134,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
         int length = args.length;
 
         if (length == 1) {
-            for (String a : List.of("create", "edit", "help", "load", "menu", "reload", "save")) {
+            for (String a : List.of("create", "edit", "help", "load", "reload", "save", "venues")) {
                 if (a.startsWith(args[0])) {
                     result.add(a);
                 }

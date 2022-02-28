@@ -6,15 +6,25 @@
 #
 #   > A list of sounds can be found here:
 #     https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html
+#     (will be useful in future updates)
 #
+#   > Add your own placeholders in the section below.
+#
+# ---------------------------------------------------------------------------------------------------- #
+
+placeholders:
+  error: "&c&l[CC]&c"
+  prefix: "&f[&b&lCable&d&lCorners&f] &9>&b"
+  success: "&b&l[CC]&b"
+
 # ---------------------------------------------------------------------------------------------------- #
 
 command:
   cablecorners:
     create:
-      - "Created new venue at your location."
+      - "{success} Created new venue at your location."
     edit:
-      - "You are not in a venue!"
+      - "{error} You are not in a venue!"
     help: # {command}
       - "/{command} Shows information about the plugin"
       - "/{command} create Creates a new venue at your current location"
@@ -25,21 +35,27 @@ command:
       - "/{command} reload Reloads the plugin"
       - "/{command} save Saves venues to configuration"
     information: # {author} {command} {name} {version}
-      - "Server running {name} v{version} by {author}"
-      - "Commands: /{command} help"
+      - "&bServer running &9{name} v{version} &bby &9{author}"
+      - "&bCommands: &9/{command} help"
     load:
-      - "Venues have been loaded from configuration."
-    menu:
-      no-venues:
-        - "No venues have been created!"
-      open: [ ]
+      - "{success} Venues have been loaded from configuration."
     reload:
-      - "Configuration files reloaded successfully."
+      - "{success} Configuration files reloaded successfully."
     save:
-      - "Venues have been saved to configuration."
+      - "{success} Venues have been saved to configuration."
     unknown-command: # {command}
-      - "Unknown sub-command. Type \"/{command} help\" for a list of commands."
+      - "{prefix} Unknown sub-command. Type \"/{command} help\" for a list of commands."
+    venues:
+      no-venues:
+        - "{prefix} No venues have been created!"
+      open: [ ]
 
 error:
   only-player:
-    - "Only players may use this command!"
+    - "{error} Only players may use this command!"
+
+game:
+  countdown: # Placeholders: {s} {seconds}
+    - "&f[&b&lCountdown&f] &9> &bDestroying a platform in &d{seconds} &bsecond{s}"
+  destroy: # Placeholders: {platform}
+    - "&f[&b&lElimination&f] &9> &b{platform} &bwas destroyed"

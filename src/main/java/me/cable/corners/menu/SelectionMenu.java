@@ -1,17 +1,20 @@
 package me.cable.corners.menu;
 
 import me.cable.corners.CableCorners;
+import me.cable.corners.component.Message;
+import me.cable.corners.component.region.Coords;
 import me.cable.corners.component.region.Platform;
 import me.cable.corners.component.region.Venue;
 import me.cable.corners.manager.VenueManager;
 import me.cable.corners.util.ItemUtils;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
+import me.cable.corners.util.Utils;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -86,7 +89,7 @@ public class SelectionMenu extends AbstractMenu {
             Platform platform = venue.getPlatforms().get(i);
             Material material = platform.getMaterial();
             String name = platform.getName();
-            ItemStack item = ItemUtils.item(material, name);
+            ItemStack item = ItemUtils.item(material, Utils.format(name));
 
             for (int slot : materialSlots[i]) {
                 inventory.setItem(slot, item);
@@ -107,7 +110,7 @@ public class SelectionMenu extends AbstractMenu {
                     previous = ItemUtils.item(Material.GRAY_DYE, ChatColor.GRAY + "" + ChatColor.BOLD + "Previous Page");
                 }
 
-                inventory.setItem(24, previous);
+                inventory.setItem(15, previous);
             }
             {
                 ItemStack next;
@@ -120,20 +123,31 @@ public class SelectionMenu extends AbstractMenu {
                 }
 
                 setTag(next, "NEXT");
-                inventory.setItem(25, next);
+                inventory.setItem(16, next);
             }
         }
         {
             ItemStack edit = ItemUtils.item(Material.LIME_DYE, ChatColor.GREEN + "" + ChatColor.BOLD + "Edit",
                     List.of(ChatColor.GRAY + "Click to edit this venue."));
             setTag(edit, "EDIT");
-            inventory.setItem(33, edit);
+            inventory.setItem(24, edit);
         }
         {
             ItemStack remove = ItemUtils.item(Material.RED_DYE, ChatColor.RED + "" + ChatColor.BOLD + "Remove",
                     List.of(ChatColor.GRAY + "Click to remove this venue."));
             setTag(remove, "REMOVE");
-            inventory.setItem(34, remove);
+            inventory.setItem(25, remove);
+        }
+        {
+            ItemStack info = ItemUtils.item(Material.ENDER_EYE, ChatColor.AQUA + "" + ChatColor.BOLD + "Page " + (index + 1),
+                    List.of(ChatColor.GRAY + "You are viewing venue " + ChatColor.YELLOW + venue.getId() + ChatColor.GRAY + "."));
+            inventory.setItem(42, info);
+        }
+        {
+            ItemStack teleport = ItemUtils.item(Material.ENDER_PEARL, ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "Teleport",
+                    List.of(ChatColor.GRAY + "Click to teleport to this venue."));
+            setTag(teleport, "TELEPORT");
+            inventory.setItem(43, teleport);
         }
     }
 
@@ -150,18 +164,12 @@ public class SelectionMenu extends AbstractMenu {
     }
 
     @Override
-    protected void onClick(@NotNull InventoryClickEvent e, @NotNull String tag) {
+    protected void onClick(@NotNull InventoryClickEvent e, @Nullable String tag) {
+        if (tag == null) return;
         if (!(e.getWhoClicked() instanceof Player player)) return;
 
         switch (tag) {
-            case "PREVIOUS" -> {
-                int index = getIndex();
-
-                if (index > 0) {
-                    Venue venue = getVenues().get(index - 1);
-                    new SelectionMenu(player, venue, cableCorners).open();
-                }
-            }
+            case "EDIT" -> new EditingMenu(player, venue, true, cableCorners).open();
             case "NEXT" -> {
                 int index = getIndex();
 
@@ -170,11 +178,31 @@ public class SelectionMenu extends AbstractMenu {
                     new SelectionMenu(player, venue, cableCorners).open();
                 }
             }
-            case "EDIT" -> new EditingMenu(player, venue, cableCorners).open();
-            case "REMOVE" -> {
+            case "PREVIOUS" -> {
                 int index = getIndex();
-                VenueManager.unregisterAndRemoveVenue(venue);
-                onVenueRemove(venue, index);
+
+                if (index > 0) {
+                    Venue venue = getVenues().get(index - 1);
+                    new SelectionMenu(player, venue, cableCorners).open();
+                }
+            }
+            case "REMOVE" -> VenueManager.unregisterAndRemoveVenue(venue);
+            case "TELEPORT" -> {
+                player.closeInventory();
+                World world = venue.getActualWorld();
+
+                if (world == null) {
+                    Message message = messages.message("error.teleport-invalid-world");
+                    message.placeholder("{venue}", String.valueOf(venue.getId()));
+                    message.placeholder("{world}", venue.getWorld());
+                    message.send(player);
+                } else {
+                    Coords centre = venue.getCentre();
+                    Location playerLoc = player.getLocation();
+                    Location location = new Location(world, centre.getX() + .5, centre.getY() + 1, centre.getZ() + .5, playerLoc.getYaw(), playerLoc.getPitch());
+                    player.teleport(location);
+                    Utils.playSound(player, Sound.ENTITY_ENDERMAN_TELEPORT);
+                }
             }
         }
     }

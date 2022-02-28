@@ -1,6 +1,8 @@
 package me.cable.corners.manager;
 
 import me.cable.corners.component.region.Venue;
+import me.cable.corners.menu.EditingMenu;
+import me.cable.corners.menu.SelectionMenu;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -60,6 +62,11 @@ public final class VenueManager {
     public static void unregisterAndRemoveVenue(@NotNull Venue venue) {
         venues.remove(venue.getId());
         venue.removePlatforms();
+
+        int index = getIndex(venue);
+
+        EditingMenu.closeOfVenue(venue);
+        SelectionMenu.onVenueRemove(venue, index);
     }
 
     public static int getIndex(@NotNull Venue venue) {

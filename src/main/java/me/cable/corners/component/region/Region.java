@@ -101,30 +101,24 @@ public class Region {
         fillInternal(Material.AIR);
     }
 
-    public @NotNull Coords getCoords1() {
-        return coords1;
-    }
-
-    public void setCoords1(@NotNull Coords coords1) {
+    public void setCoords(@Nullable Coords coords1, @Nullable Coords coords2) {
         if (placedMaterial == null) {
-            this.coords1 = coords1;
+            if (coords1 != null) {
+                this.coords1 = coords1;
+            }
+            if (coords2 != null) {
+                this.coords2 = coords2;
+            }
         } else {
             fillInternal(Material.AIR);
-            this.coords1 = coords1;
-            fillInternal(placedMaterial);
-        }
-    }
 
-    public @NotNull Coords getCoords2() {
-        return coords2;
-    }
+            if (coords1 != null) {
+                this.coords1 = coords1;
+            }
+            if (coords2 != null) {
+                this.coords2 = coords2;
+            }
 
-    public void setCoords2(@NotNull Coords coords2) {
-        if (placedMaterial == null) {
-            this.coords2 = coords2;
-        } else {
-            fillInternal(Material.AIR);
-            this.coords2 = coords2;
             fillInternal(placedMaterial);
         }
     }
@@ -137,8 +131,8 @@ public class Region {
         return Bukkit.getWorld(world);
     }
 
-    public void setWorld(@NotNull String world) {
-        if (placedMaterial == null) {
+    public void setWorld(@NotNull String world, boolean update) {
+        if (placedMaterial == null || !update) {
             this.world = world;
         } else {
             fillInternal(Material.AIR);

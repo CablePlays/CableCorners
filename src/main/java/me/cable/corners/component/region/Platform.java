@@ -38,6 +38,6 @@ public class Platform extends Region {
     }
 
     public void setName(@Nullable String name) {
-        this.name = (name == null) ? DEFAULT_NAME : Utils.format(name);
+        this.name = (name == null) ? DEFAULT_NAME : name;
     }
 }

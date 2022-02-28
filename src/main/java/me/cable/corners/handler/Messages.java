@@ -3,11 +3,14 @@ package me.cable.corners.handler;
 import me.cable.corners.CableCorners;
 import me.cable.corners.component.Message;
 import me.cable.corners.helper.YamlHelper;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public final class Messages {
 
@@ -35,11 +38,31 @@ public final class Messages {
         return fileConfiguration;
     }
 
-    public @NotNull List<String> stringList(@NotNull String path) {
+    private @NotNull Map<String, String> placeholders() {
+        ConfigurationSection configurationSection = config().getConfigurationSection("placeholders");
+        Map<String, String> map = new HashMap<>();
+
+        if (configurationSection != null) {
+            for (String key : configurationSection.getKeys(false)) {
+                String val = configurationSection.getString(key);
+                key = "{" + key + "}";
+
+                if (val != null) {
+                    map.put(key, val);
+                }
+            }
+        }
+
+        return map;
+    }
+
+    private @NotNull List<String> stringList(@NotNull String path) {
         return config().getStringList(path);
     }
 
     public @NotNull Message message(@NotNull String path) {
-        return new Message(stringList(path));
+        Message message = new Message(stringList(path));
+        placeholders().forEach(message::placeholder);
+        return message;
     }
 }

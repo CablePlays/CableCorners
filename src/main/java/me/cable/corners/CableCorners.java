@@ -4,7 +4,6 @@ import me.cable.corners.command.MainCommand;
 import me.cable.corners.component.region.Venue;
 import me.cable.corners.handler.Messages;
 import me.cable.corners.handler.SaveHandler;
-import me.cable.corners.handler.Settings;
 import me.cable.corners.listener.inventory.InventoryClick;
 import me.cable.corners.listener.inventory.InventoryClose;
 import me.cable.corners.listener.player.AsyncPlayerChat;
@@ -16,9 +15,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public final class CableCorners extends JavaPlugin {
 
-    private Settings settings;
     private Messages messages;
-
     private SaveHandler saveHandler;
 
     @Override
@@ -39,7 +36,6 @@ public final class CableCorners extends JavaPlugin {
     }
 
     private void initializeHandles() {
-        settings = new Settings(this);
         messages = new Messages(this);
         saveHandler = new SaveHandler(this);
     }
@@ -64,10 +60,6 @@ public final class CableCorners extends JavaPlugin {
 
     private void startThreads() {
         getServer().getScheduler().scheduleSyncRepeatingTask(this, new GameThread(this), 0, 20);
-    }
-
-    public Settings getSettings() {
-        return settings;
     }
 
     public Messages getMessages() {

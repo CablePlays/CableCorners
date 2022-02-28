@@ -5,16 +5,18 @@ import me.cable.corners.component.GameState;
 import me.cable.corners.component.Message;
 import me.cable.corners.component.region.Platform;
 import me.cable.corners.component.region.Venue;
-import me.cable.corners.handler.Settings;
+import me.cable.corners.handler.Messages;
 import me.cable.corners.manager.VenueManager;
+import me.cable.corners.util.Utils;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public class GameThread implements Runnable {
 
-    private final Settings settings;
+    private final Messages messages;
 
     public GameThread(@NotNull CableCorners cableCorners) {
-        settings = cableCorners.getSettings();
+        messages = cableCorners.getMessages();
     }
 
     @Override
@@ -29,7 +31,7 @@ public class GameThread implements Runnable {
                         venue.completeTask();
                     }
 
-                    Message message = new Message(settings.stringList("countdown-message"));
+                    Message message = messages.message("game.countdown");
                     message.placeholder("{s}", (venue.getTime() == 1) ? "" : "s");
                     message.placeholder("{seconds}", String.valueOf(venue.getTime()));
                     venue.getPlayers().forEach(message::send);
@@ -47,8 +49,8 @@ public class GameThread implements Runnable {
                         Platform platform = venue.selectPlatform();
                         String name = platform.getName();
 
-                        Message message = new Message(settings.stringList("destroy-message"));
-                        message.placeholder("{platform}", name);
+                        Message message = messages.message("game.destroy");
+                        message.placeholder("{platform}", Utils.format(name));
 
                         platform.remove();
                         venue.getPlayers().forEach(message::send);
