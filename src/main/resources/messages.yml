@@ -31,9 +31,9 @@ command:
       - "/{command} edit Opens the editing menu for the venue you are in"
       - "/{command} help Shows this message"
       - "/{command} load Loads venues from configuration"
-      - "/{command} menu Opens the selection menu"
       - "/{command} reload Reloads the plugin"
       - "/{command} save Saves venues to configuration"
+      - "/{command} venues Opens the selection menu"
     information: # {author} {command} {name} {version}
       - "&bServer running &9{name} v{version} &bby &9{author}"
       - "&bCommands: &9/{command} help"
