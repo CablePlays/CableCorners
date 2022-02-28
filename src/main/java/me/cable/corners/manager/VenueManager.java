@@ -61,4 +61,8 @@ public final class VenueManager {
         venues.remove(venue.getId());
         venue.removePlatforms();
     }
+
+    public static int getIndex(@NotNull Venue venue) {
+        return getVenuesOrdered().indexOf(venue);
+    }
 }

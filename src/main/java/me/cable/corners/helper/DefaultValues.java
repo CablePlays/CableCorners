@@ -1,6 +1,5 @@
 package me.cable.corners.helper;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 
@@ -9,11 +8,12 @@ import java.util.List;
 public class DefaultValues {
 
     private final List<Group> values = List.of(
-            new Group(Material.BLUE_CONCRETE, ChatColor.BLUE + "Blue"),
-            new Group(Material.RED_CONCRETE, ChatColor.RED + "Red"),
-            new Group(Material.LIME_CONCRETE, ChatColor.GREEN + "Green"),
-            new Group(Material.YELLOW_CONCRETE, ChatColor.YELLOW + "Yellow")
+            new Group(Material.BLUE_CONCRETE, "&9Blue"),
+            new Group(Material.RED_CONCRETE, "&cRed"),
+            new Group(Material.LIME_CONCRETE, "&aGreen"),
+            new Group(Material.YELLOW_CONCRETE, "&eYellow")
     );
+
     private Group current = values.get(0);
     private int i = 0;
 

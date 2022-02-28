@@ -1,12 +1,19 @@
 package me.cable.corners.menu;
 
 import me.cable.corners.CableCorners;
+import me.cable.corners.component.region.Coords;
 import me.cable.corners.component.region.Platform;
 import me.cable.corners.component.region.Venue;
+import me.cable.corners.manager.PlayerManager;
+import me.cable.corners.manager.VenueManager;
 import me.cable.corners.util.ItemUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -16,12 +23,33 @@ import java.util.List;
 public class EditingMenu extends AbstractMenu {
 
     private final Venue venue;
-
-    private final int[] materialSlots = {27, 28, 36, 37};
+    private final int[] materialSlots = {27, 28, 37, 36};
 
     protected EditingMenu(@NotNull Player player, @NotNull Venue venue, @NotNull CableCorners cableCorners) {
         super(player, cableCorners);
         this.venue = venue;
+    }
+
+    public static void updateMenus(@NotNull Venue venue) {
+        for (AbstractMenu abstractMenu : getOpenMenus()) {
+            if (abstractMenu instanceof EditingMenu editingMenu && editingMenu.venue.equals(venue)) {
+                Inventory inventory = editingMenu.getOpenInventory();
+
+                if (inventory != null) {
+                    editingMenu.update(inventory);
+                }
+            }
+        }
+    }
+
+    private static void closeOfVenue(@NotNull Venue venue) {
+        for (AbstractMenu abstractMenu : getOpenMenus()) {
+            if (abstractMenu instanceof EditingMenu editingMenu) {
+                if (editingMenu.venue.equals(venue)) {
+                    editingMenu.close();
+                }
+            }
+        }
     }
 
     @Override
@@ -40,11 +68,6 @@ public class EditingMenu extends AbstractMenu {
     }
 
     @Override
-    protected boolean preventClick() {
-        return true;
-    }
-
-    @Override
     protected void apply(@NotNull Inventory inventory) {
         update(inventory);
     }
@@ -58,7 +81,7 @@ public class EditingMenu extends AbstractMenu {
         }
         {
             ItemStack status = ItemUtils.item(Material.COAL_ORE, ChatColor.GOLD + "" + ChatColor.BOLD + "Status",
-                    List.of(ChatColor.GRAY + "If active, a venue will become playable."));
+                    List.of(ChatColor.GRAY + "If a venue is active then it is playable."));
             setTag(status, "ACTIVE");
             inventory.setItem(10, status);
         }
@@ -93,19 +116,26 @@ public class EditingMenu extends AbstractMenu {
                     ChatColor.WHITE + "Right-click" + ChatColor.GRAY + " to change this platform's name."
             ));
 
-            setTag(item, "PLATFORM_" + i);
+            setTag(item, "PLATFORM_NUMBER_" + i);
             inventory.setItem(materialSlots[i], item);
         }
 
         {
-            ItemStack centre = ItemUtils.item(Material.CHAIN_COMMAND_BLOCK, ChatColor.AQUA + "" + ChatColor.BOLD + "Venue Centre",
-                    List.of(ChatColor.GRAY + "Click to set the centre of this venue."));
+            Coords coords = venue.getCentre();
+            ItemStack centre = ItemUtils.item(Material.CHAIN_COMMAND_BLOCK, ChatColor.AQUA + "" + ChatColor.BOLD + "Venue Centre", List.of(
+                    ChatColor.YELLOW + "X: " + coords.getX() + ", Y: " + coords.getY() + ", Z: " + coords.getZ(),
+                    ChatColor.GRAY + "Click to set the centre of this venue."
+            ));
             setTag(centre, "CENTRE");
             inventory.setItem(30, centre);
         }
         {
-            ItemStack world = ItemUtils.item(Material.REPEATING_COMMAND_BLOCK, ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "Venue World",
-                    List.of(ChatColor.GRAY + "Click to set the world this venue is in."));
+            ItemStack world = ItemUtils.item(Material.REPEATING_COMMAND_BLOCK,
+                    ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "Venue World",
+                    List.of(
+                            ChatColor.YELLOW + "World: " + venue.getWorld(),
+                            ChatColor.GRAY + "Click to set the world this venue is in."
+                    ));
             setTag(world, "WORLD");
             inventory.setItem(31, world);
         }
@@ -173,6 +203,125 @@ public class EditingMenu extends AbstractMenu {
                 inventory.setItem(i + 7, info);
 
                 i += (i == 9) ? 18 : 9;
+            }
+        }
+    }
+
+    @Override
+    protected void onClick(@NotNull InventoryClickEvent e, @NotNull String tag) {
+        if (e.getView().getTopInventory().equals(e.getClickedInventory())) {
+            e.setCancelled(true);
+        }
+
+        if (!(e.getWhoClicked() instanceof Player player)) return;
+
+        if (tag.startsWith("PLATFORM_ICON_")) {
+            String[] parts = tag.split("_");
+            int index = Integer.parseInt(parts[1]);
+            Platform platform = venue.getPlatforms().get(index);
+            ClickType click = e.getClick();
+
+            if (click == ClickType.LEFT) {
+                ItemStack cursorItem = e.getCursor();
+
+                if (cursorItem != null) {
+                    Material material = cursorItem.getType();
+
+                    if (!material.isAir()) {
+                        platform.setMaterial(material);
+                    }
+
+                    player.setItemOnCursor(null);
+                    updateMenus(venue);
+                }
+            } else if (click == ClickType.RIGHT) {
+                PlayerManager.add(player, venue, platform);
+                player.closeInventory();
+                player.sendMessage(ChatColor.BLUE + "Type the new name for platform " + (index + 1) + ". Type \"cancel\" to cancel.");
+            }
+        } else switch (tag) {
+            case "ACTIVE" -> {
+                venue.setActive(!venue.isActive());
+                updateMenus(venue);
+            }
+            case "BACK" -> new SelectionMenu(player, venue, cableCorners).open();
+            case "CENTRE" -> {
+                Block block = player.getLocation().getBlock();
+                venue.setCentre(Coords.fromBlock(block));
+                player.sendMessage(ChatColor.BLUE + "Set the centre of the venue to your current location.");
+                updateMenus(venue);
+            }
+            case "COUNTDOWN_DURATION_DECREASE" -> {
+                int val = venue.getCountdownDuration();
+
+                if (val > 0) {
+                    venue.setCountdownDuration(val - 1);
+                    updateMenus(venue);
+                }
+            }
+            case "COUNTDOWN_DURATION_INCREASE" -> {
+                venue.setCountdownDuration(venue.getCountdownDuration() + 1);
+                updateMenus(venue);
+            }
+            case "ELIMINATION_DURATION_DECREASE" -> {
+                int val = venue.getEliminationDuration();
+
+                if (val > 0) {
+                    venue.setEliminationDuration(val - 1);
+                    updateMenus(venue);
+                }
+            }
+            case "ELIMINATION_DURATION_INCREASE" -> {
+                venue.setEliminationDuration(venue.getEliminationDuration() + 1);
+                updateMenus(venue);
+            }
+            case "PLATFORM_SIZE_DECREASE" -> {
+                int val = venue.getSize();
+
+                if (val > 1) {
+                    venue.setSize(val - 1);
+                    updateMenus(venue);
+                }
+            }
+            case "PLATFORM_SIZE_INCREASE" -> {
+                venue.setSize(venue.getSize() + 1);
+                updateMenus(venue);
+            }
+            case "PLATFORM_SPACE_DECREASE" -> {
+                int val = venue.getSpace();
+
+                if (val > 0) {
+                    venue.setSpace(val - 1);
+                    updateMenus(venue);
+                }
+            }
+            case "PLATFORM_SPACE_INCREASE" -> {
+                venue.setSpace(venue.getSpace() + 1);
+                updateMenus(venue);
+            }
+            case "REMOVE" -> {
+                int index = VenueManager.getIndex(venue);
+                VenueManager.unregisterAndRemoveVenue(venue);
+                SelectionMenu.onVenueRemove(venue, index);
+                closeOfVenue(venue);
+            }
+            case "REPLACEMENT_DURATION_DECREASE" -> {
+                int val = venue.getReplacementDuration();
+
+                if (val > 0) {
+                    venue.setReplacementDuration(val - 1);
+                    updateMenus(venue);
+                }
+            }
+            case "REPLACEMENT_DURATION_INCREASE" -> {
+                venue.setReplacementDuration(venue.getReplacementDuration() + 1);
+                updateMenus(venue);
+            }
+            case "WORLD" -> {
+                World world = player.getWorld();
+                venue.setWorld(world.getName());
+                player.sendMessage(ChatColor.BLUE + "Set the world of the venue to your current world.");
+                updateMenus(venue);
             }
         }
     }

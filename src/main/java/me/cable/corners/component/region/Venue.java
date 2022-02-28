@@ -192,6 +192,11 @@ public class Venue extends Region {
 
     public void setActive(boolean active) {
         this.active = active;
+
+        if (active) {
+            setTime(getCountdownDuration());
+            setGameState(GameState.START);
+        }
     }
 
     public int getCountdownDuration() {

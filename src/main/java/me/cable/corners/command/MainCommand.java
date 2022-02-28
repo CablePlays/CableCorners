@@ -9,6 +9,7 @@ import me.cable.corners.handler.SaveHandler;
 import me.cable.corners.handler.Settings;
 import me.cable.corners.manager.VenueManager;
 import me.cable.corners.menu.AbstractMenu;
+import me.cable.corners.menu.EditingMenu;
 import me.cable.corners.menu.SelectionMenu;
 import org.bukkit.block.Block;
 import org.bukkit.command.*;
@@ -100,9 +101,12 @@ public class MainCommand implements CommandExecutor, TabCompleter {
                 if (args.length < 2) {
                     message("venues.help").placeholder("{command}", label).send(sender);
                 } else if (args[1].equals("load")) {
+                    AbstractMenu.closeMenus(EditingMenu.class);
+                    AbstractMenu.closeMenus(SelectionMenu.class);
+
                     VenueManager.unregisterAndRemoveVenues();
                     saveHandler.loadVenues();
-                    AbstractMenu.closeMenus(SelectionMenu.class);
+
                     message("venues.load").send(sender);
                 } else if (args[1].equals("save")) {
                     saveHandler.saveVenues();

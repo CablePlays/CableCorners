@@ -35,11 +35,11 @@ public class Region {
     }
 
     public boolean hasValidWorld() {
-        return (getWorld() != null);
+        return (getActualWorld() != null);
     }
 
     public boolean contains(@NotNull Location location) {
-        World world = getWorld();
+        World world = getActualWorld();
         if (world == null) return false;
 
         double xl = location.getX();
@@ -70,7 +70,7 @@ public class Region {
     }
 
     private void fillInternal(@NotNull Material material) {
-        World world = getWorld();
+        World world = getActualWorld();
         if (world == null) return;
 
         int xs = Math.min(coords1.getX(), coords2.getX());
@@ -129,7 +129,11 @@ public class Region {
         }
     }
 
-    public @Nullable World getWorld() {
+    public @NotNull String getWorld() {
+        return world;
+    }
+
+    public @Nullable World getActualWorld() {
         return Bukkit.getWorld(world);
     }
 

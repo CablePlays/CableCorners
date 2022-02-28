@@ -1,4 +1,4 @@
-package me.cable.corners.listener;
+package me.cable.corners.listener.inventory;
 
 import me.cable.corners.menu.AbstractMenu;
 import org.bukkit.event.EventHandler;

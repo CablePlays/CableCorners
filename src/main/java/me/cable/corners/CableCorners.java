@@ -5,8 +5,10 @@ import me.cable.corners.component.region.Venue;
 import me.cable.corners.handler.Messages;
 import me.cable.corners.handler.SaveHandler;
 import me.cable.corners.handler.Settings;
-import me.cable.corners.listener.InventoryClick;
-import me.cable.corners.listener.InventoryClose;
+import me.cable.corners.listener.inventory.InventoryClick;
+import me.cable.corners.listener.inventory.InventoryClose;
+import me.cable.corners.listener.player.AsyncPlayerChat;
+import me.cable.corners.listener.player.PlayerQuit;
 import me.cable.corners.manager.VenueManager;
 import me.cable.corners.thread.GameThread;
 import org.bukkit.plugin.PluginManager;
@@ -49,6 +51,11 @@ public final class CableCorners extends JavaPlugin {
 
         pluginManager.registerEvents(new InventoryClick(), this);
         pluginManager.registerEvents(new InventoryClose(), this);
+
+        // Player
+
+        pluginManager.registerEvents(new AsyncPlayerChat(), this);
+        pluginManager.registerEvents(new PlayerQuit(), this);
     }
 
     private void registerCommands() {

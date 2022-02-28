@@ -4,6 +4,7 @@ import me.cable.corners.CableCorners;
 import me.cable.corners.util.ItemUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -26,7 +27,7 @@ public abstract class AbstractMenu implements InventoryHolder {
     protected final CableCorners cableCorners;
 
     private final NamespacedKey key;
-    private boolean open = false;
+    private @Nullable Inventory openInventory;
 
     protected AbstractMenu(@NotNull Player player, @NotNull CableCorners cableCorners) {
         this.player = player;
@@ -48,11 +49,19 @@ public abstract class AbstractMenu implements InventoryHolder {
     }
 
     public void open() {
-        player.openInventory(getInventory());
-
-        if (!open) {
-            open = true;
+        if (openInventory == null) {
+            openInventory = getInventory();
             openMenus.add(this);
+        }
+
+        player.openInventory(openInventory);
+    }
+
+    public void close() {
+        if (openInventory != null) {
+            for (HumanEntity humanEntity : List.copyOf(openInventory.getViewers())) {
+                humanEntity.closeInventory();
+            }
         }
     }
 
@@ -69,6 +78,14 @@ public abstract class AbstractMenu implements InventoryHolder {
         return (meta == null) ? null : meta.getPersistentDataContainer().get(key, PersistentDataType.STRING);
     }
 
+    public @Nullable Inventory getOpenInventory() {
+        return openInventory;
+    }
+
+    public boolean isOpen() {
+        return (getOpenInventory() != null);
+    }
+
     protected abstract @NotNull String title();
 
     protected abstract int rows();
@@ -81,7 +98,9 @@ public abstract class AbstractMenu implements InventoryHolder {
         return false;
     }
 
-    protected abstract void apply(@NotNull Inventory inventory);
+    protected void apply(@NotNull Inventory inventory) {
+        // override
+    }
 
     protected void fill(@NotNull Inventory inventory) {
         ItemStack item = ItemUtils.fillItem();
@@ -103,10 +122,6 @@ public abstract class AbstractMenu implements InventoryHolder {
         return inventory;
     }
 
-    public boolean isOpen() {
-        return open;
-    }
-
     public final void onInventoryClick(@NotNull InventoryClickEvent inventoryClickEvent) {
         if (preventClick()) {
             inventoryClickEvent.setCancelled(true);
@@ -121,7 +136,7 @@ public abstract class AbstractMenu implements InventoryHolder {
                 String tag = getTag(item);
 
                 if (tag != null) {
-                    onClick(player, tag);
+                    onClick(inventoryClickEvent, tag);
                 }
             }
         }
@@ -129,7 +144,7 @@ public abstract class AbstractMenu implements InventoryHolder {
 
     public final void onInventoryClose(@NotNull InventoryCloseEvent inventoryCloseEvent) {
         if (inventoryCloseEvent.getInventory().getViewers().size() <= 1) {
-            open = false;
+            openInventory = null;
             openMenus.remove(this);
         }
 
@@ -140,7 +155,7 @@ public abstract class AbstractMenu implements InventoryHolder {
         // override
     }
 
-    protected void onClick(@NotNull Player player, @NotNull String tag) {
+    protected void onClick(@NotNull InventoryClickEvent inventoryClickEvent, @NotNull String tag) {
         // override
     }
 

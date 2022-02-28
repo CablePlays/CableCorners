@@ -8,6 +8,7 @@ import me.cable.corners.util.ItemUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +31,7 @@ public class SelectionMenu extends AbstractMenu {
         this.venue = venue;
     }
 
-    private static void onVenueRemove(@NotNull Venue venue, int index) {
+    public static void onVenueRemove(@NotNull Venue venue, int index) {
         index = Math.max(index - 1, 0);
 
         List<Venue> list = VenueManager.getVenues();
@@ -39,10 +40,18 @@ public class SelectionMenu extends AbstractMenu {
         for (AbstractMenu abstractMenu : getOpenMenus()) {
             if (abstractMenu instanceof SelectionMenu selectionMenu && selectionMenu.venue.equals(venue)) {
                 if (newVenue == null) {
-                    selectionMenu.player.closeInventory();
+                    selectionMenu.close();
                 } else {
                     new SelectionMenu(selectionMenu.player, newVenue, abstractMenu.cableCorners).open();
                 }
+            }
+        }
+    }
+
+    public static void updateMenus(@NotNull Venue venue) {
+        for (AbstractMenu abstractMenu : getOpenMenus()) {
+            if (abstractMenu instanceof SelectionMenu selectionMenu && selectionMenu.venue.equals(venue)) {
+                new SelectionMenu(selectionMenu.player, venue, selectionMenu.cableCorners).open();
             }
         }
     }
@@ -129,7 +138,7 @@ public class SelectionMenu extends AbstractMenu {
     }
 
     private int getIndex() {
-        return getVenues().indexOf(venue);
+        return VenueManager.getIndex(venue);
     }
 
     private int getTotal() {
@@ -141,7 +150,9 @@ public class SelectionMenu extends AbstractMenu {
     }
 
     @Override
-    protected void onClick(@NotNull Player player, @NotNull String tag) {
+    protected void onClick(@NotNull InventoryClickEvent e, @NotNull String tag) {
+        if (!(e.getWhoClicked() instanceof Player player)) return;
+
         switch (tag) {
             case "PREVIOUS" -> {
                 int index = getIndex();
