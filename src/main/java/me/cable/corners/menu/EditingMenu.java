@@ -25,7 +25,7 @@ public class EditingMenu extends AbstractMenu {
     private final Venue venue;
     private final int[] materialSlots = {27, 28, 37, 36};
 
-    protected EditingMenu(@NotNull Player player, @NotNull Venue venue, @NotNull CableCorners cableCorners) {
+    public EditingMenu(@NotNull Player player, @NotNull Venue venue, @NotNull CableCorners cableCorners) {
         super(player, cableCorners);
         this.venue = venue;
     }
@@ -233,6 +233,7 @@ public class EditingMenu extends AbstractMenu {
 
                     player.setItemOnCursor(null);
                     updateMenus(venue);
+                    SelectionMenu.updateMenus(venue);
                 }
             } else if (click == ClickType.RIGHT) {
                 PlayerManager.add(player, venue, platform);

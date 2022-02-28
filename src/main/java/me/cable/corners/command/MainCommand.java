@@ -72,11 +72,33 @@ public class MainCommand implements CommandExecutor, TabCompleter {
                 Venue venue = new Venue(VenueManager.getNextFreeId(), 4, 1, Coords.fromBlock(centre), centre.getWorld().getName(), null);
                 VenueManager.registerVenue(venue);
 
-                venue.setActive(true); // TODO remove
-
                 message("create").send(sender);
             }
+            case "edit" -> {
+                if (!(sender instanceof Player player)) {
+                    messages.message("error.only-player").send(sender);
+                    return true;
+                }
+
+                for (Venue venue : VenueManager.getVenues()) {
+                    if (venue.contains(player)) {
+                        new EditingMenu(player, venue, cableCorners).open();
+                        return true;
+                    }
+                }
+
+                message("edit").send(sender);
+            }
             case "help" -> message("help").placeholder("{command}", label).send(sender);
+            case "load" -> {
+                AbstractMenu.closeMenus(EditingMenu.class);
+                AbstractMenu.closeMenus(SelectionMenu.class);
+
+                VenueManager.unregisterAndRemoveVenues();
+                saveHandler.loadVenues();
+
+                message("load").send(sender);
+            }
             case "menu" -> {
                 if (sender instanceof Player player) {
                     List<Venue> list = VenueManager.getVenues();
@@ -97,23 +119,9 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 
                 message("reload").send(sender);
             }
-            case "venues" -> {
-                if (args.length < 2) {
-                    message("venues.help").placeholder("{command}", label).send(sender);
-                } else if (args[1].equals("load")) {
-                    AbstractMenu.closeMenus(EditingMenu.class);
-                    AbstractMenu.closeMenus(SelectionMenu.class);
-
-                    VenueManager.unregisterAndRemoveVenues();
-                    saveHandler.loadVenues();
-
-                    message("venues.load").send(sender);
-                } else if (args[1].equals("save")) {
-                    saveHandler.saveVenues();
-                    message("venues.save").send(sender);
-                } else {
-                    message("venues.help").placeholder("{command}", label).send(sender);
-                }
+            case "save" -> {
+                saveHandler.saveVenues();
+                message("venues.save").send(sender);
             }
             default -> message("unknown-command").placeholder("{command}", label).send(sender);
         }
@@ -131,7 +139,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
         int length = args.length;
 
         if (length == 1) {
-            for (String a : List.of("create", "help", "menu", "reload", "venues")) {
+            for (String a : List.of("create", "edit", "help", "load", "menu", "reload", "save")) {
                 if (a.startsWith(args[0])) {
                     result.add(a);
                 }

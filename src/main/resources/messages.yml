@@ -13,30 +13,32 @@ command:
   cablecorners:
     create:
       - "Created new venue at your location."
+    edit:
+      - "You are not in a venue!"
     help: # {command}
       - "/{command} Shows information about the plugin"
+      - "/{command} create Creates a new venue at your current location"
+      - "/{command} edit Opens the editing menu for the venue you are in"
       - "/{command} help Shows this message"
+      - "/{command} load Loads venues from configuration"
+      - "/{command} menu Opens the selection menu"
       - "/{command} reload Reloads the plugin"
-      - "" # TODO
+      - "/{command} save Saves venues to configuration"
     information: # {author} {command} {name} {version}
       - "Server running {name} v{version} by {author}"
       - "Commands: /{command} help"
+    load:
+      - "Venues have been loaded from configuration."
     menu:
       no-venues:
         - "No venues have been created!"
-      open: []
+      open: [ ]
     reload:
       - "Configuration files reloaded successfully."
+    save:
+      - "Venues have been saved to configuration."
     unknown-command: # {command}
       - "Unknown sub-command. Type \"/{command} help\" for a list of commands."
-    venues:
-      help: # {command}
-        - "/{command} venues load"
-        - "/{command} venues save"
-      load:
-        - "Venues have been loaded from configuration."
-      save:
-        - "Venues have been saved to configuration."
 
 error:
   only-player:
