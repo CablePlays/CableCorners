@@ -3,12 +3,10 @@ package me.cable.corners.manager;
 import me.cable.corners.component.region.Venue;
 import me.cable.corners.menu.EditingMenu;
 import me.cable.corners.menu.SelectionMenu;
+import me.cable.corners.util.Utils;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 public final class VenueManager {
@@ -36,13 +34,14 @@ public final class VenueManager {
     }
 
     public static @NotNull List<Venue> getVenues() {
-        return List.copyOf(venues.values());
+        return Utils.listCopyOf(venues.values());
     }
 
     public static @NotNull List<Venue> getVenuesOrdered() {
         List<Venue> list = new ArrayList<>();
 
-        for (Entry<Integer, Venue> entry : venues.entrySet().stream().sorted(Map.Entry.comparingByKey()).toList()) {
+        for (Iterator<Entry<Integer, Venue>> it = venues.entrySet().stream().sorted(Entry.comparingByKey()).iterator(); it.hasNext(); ) {
+            Entry<Integer, Venue> entry = it.next();
             list.add(entry.getValue());
         }
 

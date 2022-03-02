@@ -8,7 +8,6 @@ import me.cable.corners.component.region.Venue;
 import me.cable.corners.handler.Messages;
 import me.cable.corners.manager.VenueManager;
 import me.cable.corners.util.Utils;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public class GameThread implements Runnable {
@@ -23,7 +22,7 @@ public class GameThread implements Runnable {
     public void run() {
         for (Venue venue : VenueManager.getActiveVenues()) {
             switch (venue.getGameState()) {
-                case COUNTDOWN -> {
+                case COUNTDOWN: {
                     if (venue.isTaskComplete()) {
                         venue.decreaseTime();
                     } else {
@@ -39,8 +38,10 @@ public class GameThread implements Runnable {
                     if (venue.getTime() <= 1) {
                         venue.setGameState(GameState.ELIMINATION);
                     }
+
+                    break;
                 }
-                case ELIMINATION -> {
+                case ELIMINATION: {
                     if (venue.isTaskComplete()) {
                         venue.decreaseTime();
                     } else {
@@ -60,8 +61,10 @@ public class GameThread implements Runnable {
                         venue.setGameState(GameState.REPLACEMENT);
                         venue.setTime(venue.getReplacementDuration());
                     }
+
+                    break;
                 }
-                case REPLACEMENT -> {
+                case REPLACEMENT: {
                     if (venue.isTaskComplete()) {
                         venue.decreaseTime();
                     } else {
@@ -72,6 +75,8 @@ public class GameThread implements Runnable {
                     if (venue.getTime() <= 1) {
                         venue.setGameState(GameState.COUNTDOWN);
                     }
+
+                    break;
                 }
             }
         }

@@ -37,11 +37,15 @@ public class EditingMenu extends AbstractMenu {
 
     public static void updateMenus(@NotNull Venue venue) {
         for (AbstractMenu abstractMenu : getOpenMenus()) {
-            if (abstractMenu instanceof EditingMenu editingMenu && editingMenu.venue.equals(venue)) {
-                Inventory inventory = editingMenu.getOpenInventory();
+            if (abstractMenu instanceof EditingMenu) {
+                EditingMenu editingMenu = (EditingMenu) abstractMenu;
 
-                if (inventory != null) {
-                    editingMenu.update(inventory);
+                if (editingMenu.venue.equals(venue)) {
+                    Inventory inventory = editingMenu.getOpenInventory();
+
+                    if (inventory != null) {
+                        editingMenu.update(inventory);
+                    }
                 }
             }
         }
@@ -49,7 +53,9 @@ public class EditingMenu extends AbstractMenu {
 
     public static void closeOfVenue(@NotNull Venue venue) {
         for (AbstractMenu abstractMenu : getOpenMenus()) {
-            if (abstractMenu instanceof EditingMenu editingMenu) {
+            if (abstractMenu instanceof EditingMenu) {
+                EditingMenu editingMenu = (EditingMenu) abstractMenu;
+
                 if (editingMenu.venue.equals(venue)) {
                     editingMenu.close();
                 }
@@ -80,12 +86,12 @@ public class EditingMenu extends AbstractMenu {
     private void update(@NotNull Inventory inventory) {
         if (back) {
             ItemStack back = ItemUtils.item(Material.ARROW, ChatColor.WHITE + "" + ChatColor.BOLD + "Back",
-                    List.of(ChatColor.GRAY + "Click to go back to the selection menu."));
+                    Utils.listOf(ChatColor.GRAY + "Click to go back to the selection menu."));
             setTag(back, "BACK");
             inventory.setItem(0, back);
         }
         {
-            ItemStack status = ItemUtils.item(Material.COAL_ORE, ChatColor.GOLD + "" + ChatColor.BOLD + "Action Status", List.of(
+            ItemStack status = ItemUtils.item(Material.COAL_ORE, ChatColor.GOLD + "" + ChatColor.BOLD + "Action Status", Utils.listOf(
                     ChatColor.GRAY + "If a venue is active then its game",
                     ChatColor.GRAY + "will cycle and it will be playable."
             ));
@@ -97,10 +103,10 @@ public class EditingMenu extends AbstractMenu {
 
             if (venue.isActive()) {
                 active = ItemUtils.item(Material.LIME_DYE, ChatColor.GREEN + "" + ChatColor.BOLD + "Active",
-                        List.of(ChatColor.GRAY + "Click to make this venue inactive."));
+                        Utils.listOf(ChatColor.GRAY + "Click to make this venue inactive."));
             } else {
                 active = ItemUtils.item(Material.GRAY_DYE, ChatColor.GRAY + "" + ChatColor.BOLD + "Inactive",
-                        List.of(ChatColor.GRAY + "Click to make this venue active."));
+                        Utils.listOf(ChatColor.GRAY + "Click to make this venue active."));
             }
 
             setTag(active, "ACTIVE");
@@ -108,7 +114,7 @@ public class EditingMenu extends AbstractMenu {
         }
         {
             ItemStack remove = ItemUtils.item(Material.RED_DYE, ChatColor.RED + "" + ChatColor.BOLD + "Remove",
-                    List.of(ChatColor.GRAY + "Click to remove this venue."));
+                    Utils.listOf(ChatColor.GRAY + "Click to remove this venue."));
             setTag(remove, "REMOVE");
             inventory.setItem(13, remove);
         }
@@ -118,7 +124,7 @@ public class EditingMenu extends AbstractMenu {
             Material material = platform.getMaterial();
             String name = platform.getName();
 
-            ItemStack item = ItemUtils.item(material, Utils.format(name), List.of(
+            ItemStack item = ItemUtils.item(material, Utils.format(name), Utils.listOf(
                     ChatColor.YELLOW + "Click" + ChatColor.GRAY + " while holding an item to set",
                     ChatColor.GRAY + "this platform's material.",
                     ChatColor.YELLOW + "Right-click" + ChatColor.GRAY + " to rename this platform."
@@ -130,7 +136,7 @@ public class EditingMenu extends AbstractMenu {
 
         {
             Coords coords = venue.getCentre();
-            ItemStack centre = ItemUtils.item(Material.CHAIN_COMMAND_BLOCK, ChatColor.AQUA + "" + ChatColor.BOLD + "Venue Centre", List.of(
+            ItemStack centre = ItemUtils.item(Material.CHAIN_COMMAND_BLOCK, ChatColor.AQUA + "" + ChatColor.BOLD + "Venue Centre", Utils.listOf(
                     ChatColor.YELLOW + "X: " + coords.getX() + ", Y: " + coords.getY() + ", Z: " + coords.getZ(),
                     ChatColor.GRAY + "Click to set the centre of this venue."
             ));
@@ -140,7 +146,7 @@ public class EditingMenu extends AbstractMenu {
         {
             ItemStack world = ItemUtils.item(Material.REPEATING_COMMAND_BLOCK,
                     ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "Venue World",
-                    List.of(
+                    Utils.listOf(
                             ChatColor.YELLOW + "World: \"" + venue.getWorld() + "\"",
                             ChatColor.GRAY + "Click to set the world this venue is in."
                     ));
@@ -148,7 +154,7 @@ public class EditingMenu extends AbstractMenu {
             inventory.setItem(31, world);
         }
         {
-            ItemStack worldValidity = ItemUtils.item(Material.BEDROCK, ChatColor.GOLD + "" + ChatColor.BOLD + "World Validity", List.of(
+            ItemStack worldValidity = ItemUtils.item(Material.BEDROCK, ChatColor.GOLD + "" + ChatColor.BOLD + "World Validity", Utils.listOf(
                     ChatColor.GRAY + "Indicates if this venue's world is",
                     ChatColor.GRAY + "valid. If the world is invalid then",
                     ChatColor.GRAY + "the venue will not be usable."
@@ -160,10 +166,10 @@ public class EditingMenu extends AbstractMenu {
 
             if (venue.hasValidWorld()) {
                 worldValidity = ItemUtils.item(Material.LIME_DYE, ChatColor.GREEN + "" + ChatColor.BOLD + "Valid",
-                        List.of(ChatColor.GRAY + "World is valid and venue will be spawned in."));
+                        Utils.listOf(ChatColor.GRAY + "World is valid and venue will be spawned in."));
             } else {
                 worldValidity = ItemUtils.item(Material.GRAY_DYE, ChatColor.GRAY + "" + ChatColor.BOLD + "Invalid",
-                        List.of(ChatColor.GRAY + "World is invalid and venue will not be spawned in."));
+                        Utils.listOf(ChatColor.GRAY + "World is invalid and venue will not be spawned in."));
             }
 
             inventory.setItem(40, worldValidity);
@@ -171,11 +177,11 @@ public class EditingMenu extends AbstractMenu {
         {
             int i = 0;
 
-            for (IncrementGroup incrementGroup : List.of(
+            for (IncrementGroup incrementGroup : Utils.listOf(
                     new IncrementGroup(
                             "PLATFORM_SIZE",
                             ChatColor.AQUA + "" + ChatColor.BOLD + "Platform Size (" + venue.getSize() + ")",
-                            List.of(
+                            Utils.listOf(
                                     ChatColor.GRAY + "Size of each platform.",
                                     ChatColor.GRAY + "e.g. " + ChatColor.YELLOW + venue.getSize() + "x" + venue.getSize()
                             )
@@ -183,35 +189,35 @@ public class EditingMenu extends AbstractMenu {
                     new IncrementGroup(
                             "PLATFORM_SPACE",
                             ChatColor.AQUA + "" + ChatColor.BOLD + "Platform Space (" + venue.getSpace() + ")",
-                            List.of(ChatColor.GRAY + "Number of blocks between each platform.")
+                            Utils.listOf(ChatColor.GRAY + "Number of blocks between each platform.")
                     ),
                     new IncrementGroup(
                             "COUNTDOWN_DURATION",
                             ChatColor.AQUA + "" + ChatColor.BOLD + "Countdown Duration (" + venue.getCountdownDuration() + ")",
-                            List.of(ChatColor.GRAY + "Length of the countdown in seconds.")
+                            Utils.listOf(ChatColor.GRAY + "Length of the countdown in seconds.")
                     ),
                     new IncrementGroup(
                             "ELIMINATION_DURATION",
                             ChatColor.AQUA + "" + ChatColor.BOLD + "Elimination Duration (" + venue.getEliminationDuration() + ")",
-                            List.of(ChatColor.GRAY + "Length of the elimination period in seconds.")
+                            Utils.listOf(ChatColor.GRAY + "Length of the elimination period in seconds.")
                     ),
                     new IncrementGroup(
                             "REPLACEMENT_DURATION",
                             ChatColor.AQUA + "" + ChatColor.BOLD + "Replacement Duration (" + venue.getReplacementDuration() + ")",
-                            List.of(ChatColor.GRAY + "Length of the replacement period in seconds.")
+                            Utils.listOf(ChatColor.GRAY + "Length of the replacement period in seconds.")
                     )
             )) {
                 ItemStack increase = ItemUtils.item(Material.LIME_STAINED_GLASS, ChatColor.GREEN + "" + ChatColor.BOLD + "Increase",
-                        List.of(ChatColor.GRAY + "Click to increase."));
-                setTag(increase, incrementGroup.tag() + "_INCREASE");
+                        Utils.listOf(ChatColor.GRAY + "Click to increase."));
+                setTag(increase, incrementGroup.tag + "_INCREASE");
                 inventory.setItem(i + 6, increase);
 
                 ItemStack decrease = ItemUtils.item(Material.RED_STAINED_GLASS, ChatColor.RED + "" + ChatColor.BOLD + "Decrease",
-                        List.of(ChatColor.GRAY + "Click to decrease."));
-                setTag(decrease, incrementGroup.tag() + "_DECREASE");
+                        Utils.listOf(ChatColor.GRAY + "Click to decrease."));
+                setTag(decrease, incrementGroup.tag + "_DECREASE");
                 inventory.setItem(i + 8, decrease);
 
-                ItemStack info = ItemUtils.item(Material.OAK_SIGN, incrementGroup.name(), incrementGroup.lore());
+                ItemStack info = ItemUtils.item(Material.OAK_SIGN, incrementGroup.name, incrementGroup.lore);
                 inventory.setItem(i + 7, info);
 
                 i += (i == 9) ? 18 : 9;
@@ -225,7 +231,9 @@ public class EditingMenu extends AbstractMenu {
             e.setCancelled(true);
         }
         if (tag == null) return;
-        if (!(e.getWhoClicked() instanceof Player player)) return;
+        if (!(e.getWhoClicked() instanceof Player)) return;
+
+        Player player = (Player) e.getWhoClicked();
 
         ClickType clickType = e.getClick();
         if (clickType != ClickType.LEFT && clickType != ClickType.RIGHT) return;
@@ -255,88 +263,120 @@ public class EditingMenu extends AbstractMenu {
                 player.sendMessage(ChatColor.BLUE + "Type the new name for platform " + (index + 1) + ". Type \"cancel\" to cancel.");
             }
         } else switch (tag) {
-            case "ACTIVE" -> {
+            case "ACTIVE": {
                 venue.setActive(!venue.isActive());
                 updateMenus(venue);
+                break;
             }
-            case "BACK" -> new SelectionMenu(player, venue, cableCorners).open();
-            case "CENTRE" -> {
+            case "BACK": {
+                new SelectionMenu(player, venue, cableCorners).open();
+                break;
+            }
+            case "CENTRE": {
                 Block block = player.getLocation().getBlock();
                 venue.setCentre(Coords.fromBlock(block));
                 player.sendMessage(ChatColor.BLUE + "Set the centre of the venue to your current location.");
                 updateMenus(venue);
+                break;
             }
-            case "COUNTDOWN_DURATION_DECREASE" -> {
+            case "COUNTDOWN_DURATION_DECREASE": {
                 int val = venue.getCountdownDuration();
 
                 if (val > 0) {
                     venue.setCountdownDuration(val - 1);
                     updateMenus(venue);
                 }
+
+                break;
             }
-            case "COUNTDOWN_DURATION_INCREASE" -> {
+            case "COUNTDOWN_DURATION_INCREASE": {
                 venue.setCountdownDuration(venue.getCountdownDuration() + 1);
                 updateMenus(venue);
+                break;
             }
-            case "ELIMINATION_DURATION_DECREASE" -> {
+            case "ELIMINATION_DURATION_DECREASE": {
                 int val = venue.getEliminationDuration();
 
                 if (val > 0) {
                     venue.setEliminationDuration(val - 1);
                     updateMenus(venue);
                 }
+
+                break;
             }
-            case "ELIMINATION_DURATION_INCREASE" -> {
+            case "ELIMINATION_DURATION_INCREASE": {
                 venue.setEliminationDuration(venue.getEliminationDuration() + 1);
                 updateMenus(venue);
+                break;
             }
-            case "PLATFORM_SIZE_DECREASE" -> {
+            case "PLATFORM_SIZE_DECREASE": {
                 int val = venue.getSize();
 
                 if (val > 1) {
                     venue.setSize(val - 1);
                     updateMenus(venue);
                 }
+                break;
             }
-            case "PLATFORM_SIZE_INCREASE" -> {
+            case "PLATFORM_SIZE_INCREASE": {
                 venue.setSize(venue.getSize() + 1);
                 updateMenus(venue);
+                break;
             }
-            case "PLATFORM_SPACE_DECREASE" -> {
+            case "PLATFORM_SPACE_DECREASE": {
                 int val = venue.getSpace();
 
                 if (val > 0) {
                     venue.setSpace(val - 1);
                     updateMenus(venue);
                 }
+
+                break;
             }
-            case "PLATFORM_SPACE_INCREASE" -> {
+            case "PLATFORM_SPACE_INCREASE": {
                 venue.setSpace(venue.getSpace() + 1);
                 updateMenus(venue);
+                break;
             }
-            case "REMOVE" -> VenueManager.unregisterAndRemoveVenue(venue);
-            case "REPLACEMENT_DURATION_DECREASE" -> {
+            case "REMOVE": {
+                VenueManager.unregisterAndRemoveVenue(venue);
+                break;
+            }
+            case "REPLACEMENT_DURATION_DECREASE": {
                 int val = venue.getReplacementDuration();
 
                 if (val > 0) {
                     venue.setReplacementDuration(val - 1);
                     updateMenus(venue);
                 }
+
+                break;
             }
-            case "REPLACEMENT_DURATION_INCREASE" -> {
+            case "REPLACEMENT_DURATION_INCREASE": {
                 venue.setReplacementDuration(venue.getReplacementDuration() + 1);
                 updateMenus(venue);
+                break;
             }
-            case "WORLD" -> {
+            case "WORLD": {
                 World world = player.getWorld();
                 venue.setWorld(world.getName());
                 player.sendMessage(ChatColor.BLUE + "Set the world of the venue to your current world.");
                 updateMenus(venue);
+                break;
             }
         }
     }
 
-    private record IncrementGroup(@NotNull String tag, @NotNull String name, @NotNull List<String> lore) {
+    private static class IncrementGroup {
 
+        private final String tag;
+        private final String name;
+        private final List<String> lore;
+
+        private IncrementGroup(@NotNull String tag, @NotNull String name, @NotNull List<String> lore) {
+            this.tag = tag;
+            this.name = name;
+            this.lore = lore;
+        }
     }
 }

@@ -13,7 +13,8 @@ public class InventoryClose implements Listener {
     private void event(@NotNull InventoryCloseEvent e) {
         Inventory inventory = e.getInventory();
 
-        if (inventory.getHolder() instanceof AbstractMenu abstractMenu) {
+        if (inventory.getHolder() instanceof AbstractMenu) {
+            AbstractMenu abstractMenu = (AbstractMenu) inventory.getHolder();
             abstractMenu.onInventoryClose(e);
         }
     }

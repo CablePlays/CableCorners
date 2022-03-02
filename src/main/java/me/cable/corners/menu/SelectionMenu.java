@@ -41,11 +41,15 @@ public class SelectionMenu extends AbstractMenu {
         Venue newVenue = (list.size() > index) ? list.get(index) : null;
 
         for (AbstractMenu abstractMenu : getOpenMenus()) {
-            if (abstractMenu instanceof SelectionMenu selectionMenu && selectionMenu.venue.equals(venue)) {
-                if (newVenue == null) {
-                    selectionMenu.close();
-                } else {
-                    new SelectionMenu(selectionMenu.player, newVenue, abstractMenu.cableCorners).open();
+            if (abstractMenu instanceof SelectionMenu) {
+                SelectionMenu selectionMenu = (SelectionMenu) abstractMenu;
+
+                if (selectionMenu.venue.equals(venue)) {
+                    if (newVenue == null) {
+                        selectionMenu.close();
+                    } else {
+                        new SelectionMenu(selectionMenu.player, newVenue, abstractMenu.cableCorners).open();
+                    }
                 }
             }
         }
@@ -53,8 +57,12 @@ public class SelectionMenu extends AbstractMenu {
 
     public static void updateMenus(@NotNull Venue venue) {
         for (AbstractMenu abstractMenu : getOpenMenus()) {
-            if (abstractMenu instanceof SelectionMenu selectionMenu && selectionMenu.venue.equals(venue)) {
-                new SelectionMenu(selectionMenu.player, venue, selectionMenu.cableCorners).open();
+            if (abstractMenu instanceof SelectionMenu) {
+                SelectionMenu selectionMenu = (SelectionMenu) abstractMenu;
+
+                if (selectionMenu.venue.equals(venue)) {
+                    new SelectionMenu(selectionMenu.player, venue, selectionMenu.cableCorners).open();
+                }
             }
         }
     }
@@ -104,7 +112,7 @@ public class SelectionMenu extends AbstractMenu {
 
                 if (index > 0) {
                     previous = ItemUtils.item(Material.ARROW, ChatColor.WHITE + "" + ChatColor.BOLD + "Previous Page",
-                            List.of(ChatColor.GRAY + "Click to go to the previous page."));
+                            Utils.listOf(ChatColor.GRAY + "Click to go to the previous page."));
                     setTag(previous, "PREVIOUS");
                 } else {
                     previous = ItemUtils.item(Material.GRAY_DYE, ChatColor.GRAY + "" + ChatColor.BOLD + "Previous Page");
@@ -117,7 +125,7 @@ public class SelectionMenu extends AbstractMenu {
 
                 if (hasNext()) {
                     next = ItemUtils.item(Material.ARROW, ChatColor.WHITE + "" + ChatColor.BOLD + "Next Page",
-                            List.of(ChatColor.GRAY + "Click to go to the next page."));
+                            Utils.listOf(ChatColor.GRAY + "Click to go to the next page."));
                 } else {
                     next = ItemUtils.item(Material.GRAY_DYE, ChatColor.GRAY + "" + ChatColor.BOLD + "Next Page");
                 }
@@ -128,24 +136,24 @@ public class SelectionMenu extends AbstractMenu {
         }
         {
             ItemStack edit = ItemUtils.item(Material.LIME_DYE, ChatColor.GREEN + "" + ChatColor.BOLD + "Edit",
-                    List.of(ChatColor.GRAY + "Click to edit this venue."));
+                    Utils.listOf(ChatColor.GRAY + "Click to edit this venue."));
             setTag(edit, "EDIT");
             inventory.setItem(24, edit);
         }
         {
             ItemStack remove = ItemUtils.item(Material.RED_DYE, ChatColor.RED + "" + ChatColor.BOLD + "Remove",
-                    List.of(ChatColor.GRAY + "Click to remove this venue."));
+                    Utils.listOf(ChatColor.GRAY + "Click to remove this venue."));
             setTag(remove, "REMOVE");
             inventory.setItem(25, remove);
         }
         {
             ItemStack info = ItemUtils.item(Material.ENDER_EYE, ChatColor.AQUA + "" + ChatColor.BOLD + "Page " + (index + 1),
-                    List.of(ChatColor.GRAY + "You are viewing venue " + ChatColor.YELLOW + venue.getId() + ChatColor.GRAY + "."));
+                    Utils.listOf(ChatColor.GRAY + "You are viewing venue " + ChatColor.YELLOW + venue.getId() + ChatColor.GRAY + "."));
             inventory.setItem(42, info);
         }
         {
             ItemStack teleport = ItemUtils.item(Material.ENDER_PEARL, ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "Teleport",
-                    List.of(ChatColor.GRAY + "Click to teleport to this venue."));
+                    Utils.listOf(ChatColor.GRAY + "Click to teleport to this venue."));
             setTag(teleport, "TELEPORT");
             inventory.setItem(43, teleport);
         }
@@ -166,28 +174,40 @@ public class SelectionMenu extends AbstractMenu {
     @Override
     protected void onClick(@NotNull InventoryClickEvent e, @Nullable String tag) {
         if (tag == null) return;
-        if (!(e.getWhoClicked() instanceof Player player)) return;
+        if (!(e.getWhoClicked() instanceof Player)) return;
+
+        Player player = (Player) e.getWhoClicked();
 
         switch (tag) {
-            case "EDIT" -> new EditingMenu(player, venue, true, cableCorners).open();
-            case "NEXT" -> {
+            case "EDIT": {
+                new EditingMenu(player, venue, true, cableCorners).open();
+                break;
+            }
+            case "NEXT": {
                 int index = getIndex();
 
                 if (hasNext()) {
                     Venue venue = getVenues().get(index + 1);
                     new SelectionMenu(player, venue, cableCorners).open();
                 }
+
+                break;
             }
-            case "PREVIOUS" -> {
+            case "PREVIOUS": {
                 int index = getIndex();
 
                 if (index > 0) {
                     Venue venue = getVenues().get(index - 1);
                     new SelectionMenu(player, venue, cableCorners).open();
                 }
+
+                break;
             }
-            case "REMOVE" -> VenueManager.unregisterAndRemoveVenue(venue);
-            case "TELEPORT" -> {
+            case "REMOVE": {
+                VenueManager.unregisterAndRemoveVenue(venue);
+                break;
+            }
+            case "TELEPORT": {
                 player.closeInventory();
                 World world = venue.getActualWorld();
 
@@ -203,6 +223,8 @@ public class SelectionMenu extends AbstractMenu {
                     player.teleport(location);
                     Utils.playSound(player, Sound.ENTITY_ENDERMAN_TELEPORT);
                 }
+
+                break;
             }
         }
     }

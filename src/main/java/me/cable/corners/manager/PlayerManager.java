@@ -25,21 +25,22 @@ public final class PlayerManager {
         return editingName.get(player);
     }
 
-    public record EditingNameEntry(Venue venue, Platform platform) implements Map.Entry<Venue, Platform> {
+    public static class EditingNameEntry {
 
-        @Override
-        public @NotNull Venue getKey() {
+        private final Venue venue;
+        private final Platform platform;
+
+        public EditingNameEntry(@NotNull Venue venue, @NotNull Platform platform) {
+            this.venue = venue;
+            this.platform = platform;
+        }
+
+        public @NotNull Venue getVenue() {
             return venue;
         }
 
-        @Override
-        public @NotNull Platform getValue() {
+        public @NotNull Platform getPlatform() {
             return platform;
-        }
-
-        @Override
-        public @NotNull Platform setValue(Platform value) {
-            throw new RuntimeException("Method should not be used");
         }
     }
 }

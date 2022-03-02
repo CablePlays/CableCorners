@@ -10,6 +10,7 @@ import me.cable.corners.manager.VenueManager;
 import me.cable.corners.menu.AbstractMenu;
 import me.cable.corners.menu.EditingMenu;
 import me.cable.corners.menu.SelectionMenu;
+import me.cable.corners.util.Utils;
 import org.bukkit.block.Block;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
@@ -59,23 +60,28 @@ public class MainCommand implements CommandExecutor, TabCompleter {
         }
 
         switch (args[0]) {
-            case "create" -> {
-                if (!(sender instanceof Player player)) {
+            case "create": {
+                if (!(sender instanceof Player)) {
                     messages.message("error.only-player").send(sender);
                     return true;
                 }
+
+                Player player = (Player) sender;
 
                 Block centre = player.getLocation().getBlock();
                 Venue venue = new Venue(VenueManager.getNextFreeId(), 3, 3, Coords.fromBlock(centre), centre.getWorld().getName(), null);
                 VenueManager.registerVenue(venue);
 
                 message("create").send(sender);
+                break;
             }
-            case "edit" -> {
-                if (!(sender instanceof Player player)) {
+            case "edit": {
+                if (!(sender instanceof Player)) {
                     messages.message("error.only-player").send(sender);
                     return true;
                 }
+
+                Player player = (Player) sender;
 
                 for (Venue venue : VenueManager.getVenues()) {
                     if (venue.contains(player)) {
@@ -85,9 +91,13 @@ public class MainCommand implements CommandExecutor, TabCompleter {
                 }
 
                 message("edit").send(sender);
+                break;
             }
-            case "help" -> message("help").placeholder("{command}", label).send(sender);
-            case "load" -> {
+            case "help": {
+                message("help").placeholder("{command}", label).send(sender);
+                break;
+            }
+            case "load": {
                 AbstractMenu.closeMenus(EditingMenu.class);
                 AbstractMenu.closeMenus(SelectionMenu.class);
 
@@ -95,17 +105,21 @@ public class MainCommand implements CommandExecutor, TabCompleter {
                 saveHandler.loadVenues();
 
                 message("load").send(sender);
+                break;
             }
-            case "reload" -> {
+            case "reload": {
                 messages.load();
                 message("reload").send(sender);
+                break;
             }
-            case "save" -> {
+            case "save": {
                 saveHandler.saveVenues();
                 message("save").send(sender);
+                break;
             }
-            case "venues" -> {
-                if (sender instanceof Player player) {
+            case "venues": {
+                if (sender instanceof Player) {
+                    Player player = (Player) sender;
                     List<Venue> list = VenueManager.getVenues();
 
                     if (list.isEmpty()) {
@@ -117,8 +131,13 @@ public class MainCommand implements CommandExecutor, TabCompleter {
                 } else {
                     messages.message("error.only-player").send(sender);
                 }
+
+                break;
             }
-            default -> message("unknown-command").placeholder("{command}", label).send(sender);
+            default: {
+                message("unknown-command").placeholder("{command}", label).send(sender);
+                break;
+            }
         }
 
         return true;
@@ -134,13 +153,13 @@ public class MainCommand implements CommandExecutor, TabCompleter {
         int length = args.length;
 
         if (length == 1) {
-            for (String a : List.of("create", "edit", "help", "load", "reload", "save", "venues")) {
+            for (String a : Utils.listOf("create", "edit", "help", "load", "reload", "save", "venues")) {
                 if (a.startsWith(args[0])) {
                     result.add(a);
                 }
             }
         } else if (length == 2 && args[0].equals("venues")) {
-            for (String a : List.of("load", "save")) {
+            for (String a : Utils.listOf("load", "save")) {
                 if (a.startsWith(args[1])) {
                     result.add(a);
                 }

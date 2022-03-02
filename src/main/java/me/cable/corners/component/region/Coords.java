@@ -47,16 +47,25 @@ public class Coords implements Serializable {
     }
 
     public @NotNull Coords getRelative(@NotNull BlockFace blockFace, int a) {
-        return switch (blockFace) {
-            case NORTH -> add(0, 0, -a);
-            case SOUTH -> add(0, 0, a);
-            case EAST -> add(a, 0, 0);
-            case WEST -> add(-a, 0, 0);
-            case NORTH_EAST -> add(a, 0, -a);
-            case NORTH_WEST -> add(-a, 0, -a);
-            case SOUTH_EAST -> add(a, 0, a);
-            case SOUTH_WEST -> add(-a, 0, a);
-            default -> this;
-        };
+        switch (blockFace) {
+            case NORTH:
+                return add(0, 0, -a);
+            case SOUTH:
+                return add(0, 0, a);
+            case EAST:
+                return add(a, 0, 0);
+            case WEST:
+                return add(-a, 0, 0);
+            case NORTH_EAST:
+                return add(a, 0, -a);
+            case NORTH_WEST:
+                return add(-a, 0, -a);
+            case SOUTH_EAST:
+                return add(a, 0, a);
+            case SOUTH_WEST:
+                return add(-a, 0, a);
+            default:
+                return this;
+        }
     }
 }

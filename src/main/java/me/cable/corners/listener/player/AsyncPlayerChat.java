@@ -27,8 +27,8 @@ public class AsyncPlayerChat implements Listener {
             if (text.equals("cancel")) {
                 player.sendMessage(ChatColor.BLUE + "Platform renaming cancelled.");
             } else {
-                Venue venue = editingNameEntry.venue();
-                Platform platform = editingNameEntry.platform();
+                Venue venue = editingNameEntry.getVenue();
+                Platform platform = editingNameEntry.getPlatform();
 
                 platform.setName(text);
                 player.sendMessage(ChatColor.BLUE + "Platform has been renamed to \"" + Utils.format(text) + ChatColor.RESET + ChatColor.BLUE + "\"");

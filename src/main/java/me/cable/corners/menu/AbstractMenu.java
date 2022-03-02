@@ -3,6 +3,7 @@ package me.cable.corners.menu;
 import me.cable.corners.CableCorners;
 import me.cable.corners.handler.Messages;
 import me.cable.corners.util.ItemUtils;
+import me.cable.corners.util.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.HumanEntity;
@@ -43,7 +44,7 @@ public abstract class AbstractMenu implements InventoryHolder {
     }
 
     public static @NotNull List<AbstractMenu> getOpenMenus() {
-        return List.copyOf(openMenus);
+        return Utils.listCopyOf(openMenus);
     }
 
     public static void closeMenus(Class<? extends AbstractMenu> clazz) {
@@ -65,7 +66,7 @@ public abstract class AbstractMenu implements InventoryHolder {
 
     public void close() {
         if (openInventory != null) {
-            for (HumanEntity humanEntity : List.copyOf(openInventory.getViewers())) {
+            for (HumanEntity humanEntity : Utils.listCopyOf(openInventory.getViewers())) {
                 humanEntity.closeInventory();
             }
         }

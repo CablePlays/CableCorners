@@ -5,6 +5,11 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
 public final class Utils {
 
     public static @NotNull String format(@NotNull String string) {
@@ -13,5 +18,14 @@ public final class Utils {
 
     public static void playSound(@NotNull Player player, @NotNull Sound sound) {
         player.playSound(player.getLocation(), sound, 1, 1);
+    }
+
+    @SafeVarargs
+    public static <T> @NotNull List<T> listOf(T... args) {
+        return Arrays.asList(args);
+    }
+
+    public static <T> @NotNull List<T> listCopyOf(@NotNull Collection<T> list) {
+        return new ArrayList<>(list);
     }
 }

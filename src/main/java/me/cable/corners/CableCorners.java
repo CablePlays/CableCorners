@@ -16,6 +16,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 public final class CableCorners extends JavaPlugin {
 
     // TODO make help message nice
+    // TODO make version compatible
+    // TODO add more default platform layouts
+    // TODO add custom jump height and speed when in a venue
+    // TODO add TNT spawning
 
     private Messages messages;
     private SaveHandler saveHandler;
