@@ -142,6 +142,7 @@ public class SelectionMenu extends AbstractMenu {
                     Utils.listOf(ChatColor.GRAY + "Click to remove this venue."));
             setTag(remove, "REMOVE");
 <<<<<<< HEAD
+<<<<<<< HEAD
             inventory.setItem(25, remove);
         }
         {
@@ -154,6 +155,9 @@ public class SelectionMenu extends AbstractMenu {
                     Utils.listOf(ChatColor.GRAY + "Click to teleport to this venue."));
             setTag(teleport, "TELEPORT");
             inventory.setItem(43, teleport);
+=======
+            inventory.setItem(34, remove);
+>>>>>>> parent of 3d5a745 (Visual updates)
 =======
             inventory.setItem(34, remove);
 >>>>>>> parent of 3d5a745 (Visual updates)
@@ -174,6 +178,7 @@ public class SelectionMenu extends AbstractMenu {
 
     @Override
 <<<<<<< HEAD
+<<<<<<< HEAD
     protected void onClick(@NotNull InventoryClickEvent e, @Nullable String tag) {
         if (tag == null) return;
         if (!(e.getWhoClicked() instanceof Player)) return;
@@ -187,11 +192,16 @@ public class SelectionMenu extends AbstractMenu {
             }
             case "NEXT": {
 =======
+=======
+>>>>>>> parent of 3d5a745 (Visual updates)
     protected void onClick(@NotNull InventoryClickEvent e, @NotNull String tag) {
         if (!(e.getWhoClicked() instanceof Player player)) return;
 
         switch (tag) {
             case "PREVIOUS" -> {
+<<<<<<< HEAD
+>>>>>>> parent of 3d5a745 (Visual updates)
+=======
 >>>>>>> parent of 3d5a745 (Visual updates)
                 int index = getIndex();
 
@@ -203,7 +213,11 @@ public class SelectionMenu extends AbstractMenu {
                 break;
             }
 <<<<<<< HEAD
+<<<<<<< HEAD
             case "PREVIOUS": {
+=======
+            case "NEXT" -> {
+>>>>>>> parent of 3d5a745 (Visual updates)
 =======
             case "NEXT" -> {
 >>>>>>> parent of 3d5a745 (Visual updates)
@@ -216,6 +230,7 @@ public class SelectionMenu extends AbstractMenu {
 
                 break;
             }
+<<<<<<< HEAD
 <<<<<<< HEAD
             case "REMOVE": {
                 VenueManager.unregisterAndRemoveVenue(venue);
@@ -240,11 +255,16 @@ public class SelectionMenu extends AbstractMenu {
 
                 break;
 =======
+=======
+>>>>>>> parent of 3d5a745 (Visual updates)
             case "EDIT" -> new EditingMenu(player, venue, cableCorners).open();
             case "REMOVE" -> {
                 int index = getIndex();
                 VenueManager.unregisterAndRemoveVenue(venue);
                 onVenueRemove(venue, index);
+<<<<<<< HEAD
+>>>>>>> parent of 3d5a745 (Visual updates)
+=======
 >>>>>>> parent of 3d5a745 (Visual updates)
             }
         }

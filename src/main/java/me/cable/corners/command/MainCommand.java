@@ -111,6 +111,7 @@ public class MainCommand implements CommandExecutor, TabCompleter {
                 break;
             }
 <<<<<<< HEAD
+<<<<<<< HEAD
             case "reload": {
                 messages.load();
                 message("reload").send(sender);
@@ -125,6 +126,8 @@ public class MainCommand implements CommandExecutor, TabCompleter {
                 if (sender instanceof Player) {
                     Player player = (Player) sender;
 =======
+=======
+>>>>>>> parent of 3d5a745 (Visual updates)
             case "menu" -> {
                 if (sender instanceof Player player) {
 >>>>>>> parent of 3d5a745 (Visual updates)
@@ -158,6 +161,16 @@ public class MainCommand implements CommandExecutor, TabCompleter {
                 saveHandler.saveVenues();
                 message("venues.save").send(sender);
             }
+            case "reload" -> {
+                settings.load();
+                messages.load();
+
+                message("reload").send(sender);
+            }
+            case "save" -> {
+                saveHandler.saveVenues();
+                message("venues.save").send(sender);
+            }
             default -> message("unknown-command").placeholder("{command}", label).send(sender);
 >>>>>>> parent of 3d5a745 (Visual updates)
         }
@@ -176,7 +189,11 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 
         if (length == 1) {
 <<<<<<< HEAD
+<<<<<<< HEAD
             for (String a : Utils.listOf("create", "edit", "help", "load", "reload", "save", "venues")) {
+=======
+            for (String a : List.of("create", "edit", "help", "load", "menu", "reload", "save")) {
+>>>>>>> parent of 3d5a745 (Visual updates)
 =======
             for (String a : List.of("create", "edit", "help", "load", "menu", "reload", "save")) {
 >>>>>>> parent of 3d5a745 (Visual updates)

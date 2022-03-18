@@ -17,12 +17,16 @@ import org.bukkit.plugin.java.JavaPlugin;
 public final class CableCorners extends JavaPlugin {
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     // TODO make help message nice
     // TODO make version compatible
     // TODO add more default platform layouts
     // TODO add custom jump height and speed when in a venue
     // TODO add TNT spawning
 
+=======
+    private Settings settings;
+>>>>>>> parent of 3d5a745 (Visual updates)
 =======
     private Settings settings;
 >>>>>>> parent of 3d5a745 (Visual updates)

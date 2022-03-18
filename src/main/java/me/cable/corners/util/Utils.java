@@ -14,6 +14,7 @@ public final class Utils {
         return ChatColor.translateAlternateColorCodes('&', string);
     }
 <<<<<<< HEAD
+<<<<<<< HEAD
 
     public static void playSound(@NotNull Player player, @NotNull Sound sound) {
         player.playSound(player.getLocation(), sound, 1, 1);
@@ -27,6 +28,8 @@ public final class Utils {
     public static <T> @NotNull List<T> listCopyOf(@NotNull Collection<T> list) {
         return new ArrayList<>(list);
     }
+=======
+>>>>>>> parent of 3d5a745 (Visual updates)
 =======
 >>>>>>> parent of 3d5a745 (Visual updates)
 }
