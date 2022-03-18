@@ -9,16 +9,16 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.util.List;
 
-public final class Messages {
+public final class Settings {
 
     private final CableCorners cableCorners;
 
     private final File file;
     private FileConfiguration fileConfiguration;
 
-    public Messages(@NotNull CableCorners cableCorners) {
+    public Settings(@NotNull CableCorners cableCorners) {
         this.cableCorners = cableCorners;
-        file = new File(cableCorners.getDataFolder(), "messages.yml");
+        file = new File(cableCorners.getDataFolder(), "config.yml");
         load();
     }
 
@@ -33,6 +33,10 @@ public final class Messages {
         }
 
         return fileConfiguration;
+    }
+
+    public int integer(@NotNull String path) {
+        return config().getInt(path);
     }
 
     public @NotNull List<String> stringList(@NotNull String path) {

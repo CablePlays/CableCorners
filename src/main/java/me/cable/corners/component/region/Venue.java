@@ -116,7 +116,8 @@ public class Venue extends Region {
     }
 
     private void updateProperties() {
-        setCoords(centre.add(space + size, 5, space + size), centre.subtract(space + size, 5, space + size));
+        setCoords1(centre.add(space + size, 5, space + size));
+        setCoords2(centre.subtract(space + size, 5, space + size));
 
         int move = space / 2 + 1;
         int two = move + size - 1;
@@ -127,10 +128,10 @@ public class Venue extends Region {
             Platform platform = platforms.get(i);
             AdvancedBlockFace a = AdvancedBlockFace.values()[i];
 
-            platform.setCoords(
-                    centre.getRelative(a.blockFace1(), move - a.subtract1(odd)).getRelative(a.blockFace2(), move - a.subtract2(odd)),
-                    centre.getRelative(a.blockFace1(), two - a.subtract1(odd)).getRelative(a.blockFace2(), two - a.subtract2(odd))
-            );
+            platform.setCoords1(
+                    centre.getRelative(a.blockFace1(), move - a.subtract1(odd)).getRelative(a.blockFace2(), move - a.subtract2(odd)));
+            platform.setCoords2(
+                    centre.getRelative(a.blockFace1(), two - a.subtract1(odd)).getRelative(a.blockFace2(), two - a.subtract2(odd)));
         }
     }
 
@@ -152,11 +153,6 @@ public class Venue extends Region {
 
     public void removePlatforms() {
         platforms.forEach(Platform::remove);
-    }
-
-    public void setWorld(@NotNull String world) {
-        super.setWorld(world, true);
-        platforms.forEach(a -> a.setWorld(world, true));
     }
 
     public int getId() {
@@ -200,8 +196,6 @@ public class Venue extends Region {
         if (active) {
             setTime(getCountdownDuration());
             setGameState(GameState.START);
-        } else {
-            placePlatforms();
         }
     }
 

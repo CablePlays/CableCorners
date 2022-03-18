@@ -7,7 +7,6 @@ import me.cable.corners.component.region.Venue;
 import me.cable.corners.manager.PlayerManager;
 import me.cable.corners.manager.VenueManager;
 import me.cable.corners.util.ItemUtils;
-import me.cable.corners.util.Utils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -18,7 +17,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -27,12 +25,9 @@ public class EditingMenu extends AbstractMenu {
     private final Venue venue;
     private final int[] materialSlots = {27, 28, 37, 36};
 
-    private final boolean back;
-
-    public EditingMenu(@NotNull Player player, @NotNull Venue venue, boolean back, @NotNull CableCorners cableCorners) {
+    public EditingMenu(@NotNull Player player, @NotNull Venue venue, @NotNull CableCorners cableCorners) {
         super(player, cableCorners);
         this.venue = venue;
-        this.back = back;
     }
 
     public static void updateMenus(@NotNull Venue venue) {
@@ -51,7 +46,7 @@ public class EditingMenu extends AbstractMenu {
         }
     }
 
-    public static void closeOfVenue(@NotNull Venue venue) {
+    private static void closeOfVenue(@NotNull Venue venue) {
         for (AbstractMenu abstractMenu : getOpenMenus()) {
             if (abstractMenu instanceof EditingMenu) {
                 EditingMenu editingMenu = (EditingMenu) abstractMenu;
@@ -84,17 +79,22 @@ public class EditingMenu extends AbstractMenu {
     }
 
     private void update(@NotNull Inventory inventory) {
-        if (back) {
+        {
             ItemStack back = ItemUtils.item(Material.ARROW, ChatColor.WHITE + "" + ChatColor.BOLD + "Back",
                     Utils.listOf(ChatColor.GRAY + "Click to go back to the selection menu."));
             setTag(back, "BACK");
             inventory.setItem(0, back);
         }
         {
+<<<<<<< HEAD
             ItemStack status = ItemUtils.item(Material.COAL_ORE, ChatColor.GOLD + "" + ChatColor.BOLD + "Action Status", Utils.listOf(
                     ChatColor.GRAY + "If a venue is active then its game",
                     ChatColor.GRAY + "will cycle and it will be playable."
             ));
+=======
+            ItemStack status = ItemUtils.item(Material.COAL_ORE, ChatColor.GOLD + "" + ChatColor.BOLD + "Status",
+                    List.of(ChatColor.GRAY + "If a venue is active then it is playable."));
+>>>>>>> parent of 3d5a745 (Visual updates)
             setTag(status, "ACTIVE");
             inventory.setItem(10, status);
         }
@@ -124,13 +124,19 @@ public class EditingMenu extends AbstractMenu {
             Material material = platform.getMaterial();
             String name = platform.getName();
 
+<<<<<<< HEAD
             ItemStack item = ItemUtils.item(material, Utils.format(name), Utils.listOf(
                     ChatColor.YELLOW + "Click" + ChatColor.GRAY + " while holding an item to set",
                     ChatColor.GRAY + "this platform's material.",
                     ChatColor.YELLOW + "Right-click" + ChatColor.GRAY + " to rename this platform."
+=======
+            ItemStack item = ItemUtils.item(material, name, List.of(
+                    ChatColor.WHITE + "Click" + ChatColor.GRAY + " with an item on your cursor to change this platform's material.",
+                    ChatColor.WHITE + "Right-click" + ChatColor.GRAY + " to change this platform's name."
+>>>>>>> parent of 3d5a745 (Visual updates)
             ));
 
-            setTag(item, "PLATFORM_ICON_" + i);
+            setTag(item, "PLATFORM_NUMBER_" + i);
             inventory.setItem(materialSlots[i], item);
         }
 
@@ -146,18 +152,29 @@ public class EditingMenu extends AbstractMenu {
         {
             ItemStack world = ItemUtils.item(Material.REPEATING_COMMAND_BLOCK,
                     ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "Venue World",
+<<<<<<< HEAD
                     Utils.listOf(
                             ChatColor.YELLOW + "World: \"" + venue.getWorld() + "\"",
+=======
+                    List.of(
+                            ChatColor.YELLOW + "World: " + venue.getWorld(),
+>>>>>>> parent of 3d5a745 (Visual updates)
                             ChatColor.GRAY + "Click to set the world this venue is in."
                     ));
             setTag(world, "WORLD");
             inventory.setItem(31, world);
         }
         {
+<<<<<<< HEAD
             ItemStack worldValidity = ItemUtils.item(Material.BEDROCK, ChatColor.GOLD + "" + ChatColor.BOLD + "World Validity", Utils.listOf(
                     ChatColor.GRAY + "Indicates if this venue's world is",
                     ChatColor.GRAY + "valid. If the world is invalid then",
                     ChatColor.GRAY + "the venue will not be usable."
+=======
+            ItemStack worldValidity = ItemUtils.item(Material.BEDROCK, ChatColor.GOLD + "" + ChatColor.BOLD + "World Validity", List.of(
+                    ChatColor.GRAY + "Here you can see if the world of this venue is valid.",
+                    ChatColor.GRAY + "If a world is invalid then the venue will not be spawned anywhere."
+>>>>>>> parent of 3d5a745 (Visual updates)
             ));
             inventory.setItem(39, worldValidity);
         }
@@ -181,19 +198,28 @@ public class EditingMenu extends AbstractMenu {
                     new IncrementGroup(
                             "PLATFORM_SIZE",
                             ChatColor.AQUA + "" + ChatColor.BOLD + "Platform Size (" + venue.getSize() + ")",
+<<<<<<< HEAD
                             Utils.listOf(
                                     ChatColor.GRAY + "Size of each platform.",
                                     ChatColor.GRAY + "e.g. " + ChatColor.YELLOW + venue.getSize() + "x" + venue.getSize()
                             )
+=======
+                            List.of(ChatColor.GRAY + "The size each of the platforms will be.")
+>>>>>>> parent of 3d5a745 (Visual updates)
                     ),
                     new IncrementGroup(
                             "PLATFORM_SPACE",
                             ChatColor.AQUA + "" + ChatColor.BOLD + "Platform Space (" + venue.getSpace() + ")",
+<<<<<<< HEAD
                             Utils.listOf(ChatColor.GRAY + "Number of blocks between each platform.")
+=======
+                            List.of(ChatColor.GRAY + "The space between each of the platforms vertically and horizontally.")
+>>>>>>> parent of 3d5a745 (Visual updates)
                     ),
                     new IncrementGroup(
                             "COUNTDOWN_DURATION",
                             ChatColor.AQUA + "" + ChatColor.BOLD + "Countdown Duration (" + venue.getCountdownDuration() + ")",
+<<<<<<< HEAD
                             Utils.listOf(ChatColor.GRAY + "Length of the countdown in seconds.")
                     ),
                     new IncrementGroup(
@@ -205,6 +231,19 @@ public class EditingMenu extends AbstractMenu {
                             "REPLACEMENT_DURATION",
                             ChatColor.AQUA + "" + ChatColor.BOLD + "Replacement Duration (" + venue.getReplacementDuration() + ")",
                             Utils.listOf(ChatColor.GRAY + "Length of the replacement period in seconds.")
+=======
+                            List.of(ChatColor.GRAY + "How long the countdown will last (seconds).")
+                    ),
+                    new IncrementGroup(
+                            "ELIMINATION_DURATION",
+                            ChatColor.AQUA + "" + ChatColor.BOLD + "Platform Size (" + venue.getEliminationDuration() + ")",
+                            List.of(ChatColor.GRAY + "How long the elimination period will last (seconds).")
+                    ),
+                    new IncrementGroup(
+                            "REPLACEMENT_DURATION",
+                            ChatColor.AQUA + "" + ChatColor.BOLD + "Platform Size (" + venue.getReplacementDuration() + ")",
+                            List.of(ChatColor.GRAY + "How long the replacement period will last (seconds).")
+>>>>>>> parent of 3d5a745 (Visual updates)
                     )
             )) {
                 ItemStack increase = ItemUtils.item(Material.LIME_STAINED_GLASS, ChatColor.GREEN + "" + ChatColor.BOLD + "Increase",
@@ -226,24 +265,27 @@ public class EditingMenu extends AbstractMenu {
     }
 
     @Override
-    protected void onClick(@NotNull InventoryClickEvent e, @Nullable String tag) {
+    protected void onClick(@NotNull InventoryClickEvent e, @NotNull String tag) {
         if (e.getView().getTopInventory().equals(e.getClickedInventory())) {
             e.setCancelled(true);
         }
+<<<<<<< HEAD
         if (tag == null) return;
         if (!(e.getWhoClicked() instanceof Player)) return;
 
         Player player = (Player) e.getWhoClicked();
+=======
+>>>>>>> parent of 3d5a745 (Visual updates)
 
-        ClickType clickType = e.getClick();
-        if (clickType != ClickType.LEFT && clickType != ClickType.RIGHT) return;
+        if (!(e.getWhoClicked() instanceof Player player)) return;
 
         if (tag.startsWith("PLATFORM_ICON_")) {
             String[] parts = tag.split("_");
-            int index = Integer.parseInt(parts[2]);
+            int index = Integer.parseInt(parts[1]);
             Platform platform = venue.getPlatforms().get(index);
+            ClickType click = e.getClick();
 
-            if (clickType == ClickType.LEFT) {
+            if (click == ClickType.LEFT) {
                 ItemStack cursorItem = e.getCursor();
 
                 if (cursorItem != null) {
@@ -257,7 +299,7 @@ public class EditingMenu extends AbstractMenu {
                     updateMenus(venue);
                     SelectionMenu.updateMenus(venue);
                 }
-            } else {
+            } else if (click == ClickType.RIGHT) {
                 PlayerManager.add(player, venue, platform);
                 player.closeInventory();
                 player.sendMessage(ChatColor.BLUE + "Type the new name for platform " + (index + 1) + ". Type \"cancel\" to cancel.");
@@ -342,7 +384,17 @@ public class EditingMenu extends AbstractMenu {
                 VenueManager.unregisterAndRemoveVenue(venue);
                 break;
             }
+<<<<<<< HEAD
             case "REPLACEMENT_DURATION_DECREASE": {
+=======
+            case "REMOVE" -> {
+                int index = VenueManager.getIndex(venue);
+                VenueManager.unregisterAndRemoveVenue(venue);
+                SelectionMenu.onVenueRemove(venue, index);
+                closeOfVenue(venue);
+            }
+            case "REPLACEMENT_DURATION_DECREASE" -> {
+>>>>>>> parent of 3d5a745 (Visual updates)
                 int val = venue.getReplacementDuration();
 
                 if (val > 0) {

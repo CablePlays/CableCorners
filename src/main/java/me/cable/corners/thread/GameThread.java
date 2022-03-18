@@ -5,17 +5,20 @@ import me.cable.corners.component.GameState;
 import me.cable.corners.component.Message;
 import me.cable.corners.component.region.Platform;
 import me.cable.corners.component.region.Venue;
-import me.cable.corners.handler.Messages;
+import me.cable.corners.handler.Settings;
 import me.cable.corners.manager.VenueManager;
+<<<<<<< HEAD
 import me.cable.corners.util.Utils;
+=======
+>>>>>>> parent of 3d5a745 (Visual updates)
 import org.jetbrains.annotations.NotNull;
 
 public class GameThread implements Runnable {
 
-    private final Messages messages;
+    private final Settings settings;
 
     public GameThread(@NotNull CableCorners cableCorners) {
-        messages = cableCorners.getMessages();
+        settings = cableCorners.getSettings();
     }
 
     @Override
@@ -30,7 +33,7 @@ public class GameThread implements Runnable {
                         venue.completeTask();
                     }
 
-                    Message message = messages.message("game.countdown");
+                    Message message = new Message(settings.stringList("countdown-message"));
                     message.placeholder("{s}", (venue.getTime() == 1) ? "" : "s");
                     message.placeholder("{seconds}", String.valueOf(venue.getTime()));
                     venue.getPlayers().forEach(message::send);
@@ -50,8 +53,8 @@ public class GameThread implements Runnable {
                         Platform platform = venue.selectPlatform();
                         String name = platform.getName();
 
-                        Message message = messages.message("game.destroy");
-                        message.placeholder("{platform}", Utils.format(name));
+                        Message message = new Message(settings.stringList("destroy-message"));
+                        message.placeholder("{platform}", name);
 
                         platform.remove();
                         venue.getPlayers().forEach(message::send);

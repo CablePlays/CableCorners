@@ -1,7 +1,6 @@
 package me.cable.corners.menu;
 
 import me.cable.corners.CableCorners;
-import me.cable.corners.handler.Messages;
 import me.cable.corners.util.ItemUtils;
 import me.cable.corners.util.Utils;
 import org.bukkit.Bukkit;
@@ -20,25 +19,20 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public abstract class AbstractMenu implements InventoryHolder {
 
     private static final List<AbstractMenu> openMenus = new ArrayList<>();
 
-    protected final CableCorners cableCorners;
-    protected final Messages messages;
-
     protected final Player player;
+    protected final CableCorners cableCorners;
 
     private final NamespacedKey key;
     private @Nullable Inventory openInventory;
 
     protected AbstractMenu(@NotNull Player player, @NotNull CableCorners cableCorners) {
-        this.cableCorners = cableCorners;
-        this.messages = cableCorners.getMessages();
-
         this.player = player;
+        this.cableCorners = cableCorners;
 
         key = new NamespacedKey(cableCorners, "key");
     }
@@ -126,18 +120,6 @@ public abstract class AbstractMenu implements InventoryHolder {
         }
 
         apply(inventory);
-
-        String random = UUID.randomUUID().toString();
-
-        for (ItemStack item : inventory.getContents()) {
-            ItemMeta meta = item.getItemMeta();
-
-            if (meta != null) {
-                meta.getPersistentDataContainer().set(new NamespacedKey(cableCorners, "random"), PersistentDataType.STRING, random);
-                item.setItemMeta(meta);
-            }
-        }
-
         return inventory;
     }
 
@@ -148,10 +130,17 @@ public abstract class AbstractMenu implements InventoryHolder {
 
         onClick(inventoryClickEvent);
 
-        ItemStack item = inventoryClickEvent.getCurrentItem();
-        String tag = (item == null) ? null : getTag(item);
+        if (inventoryClickEvent.getWhoClicked() instanceof Player player) {
+            ItemStack item = inventoryClickEvent.getCurrentItem();
 
-        onClick(inventoryClickEvent, tag);
+            if (item != null) {
+                String tag = getTag(item);
+
+                if (tag != null) {
+                    onClick(inventoryClickEvent, tag);
+                }
+            }
+        }
     }
 
     public final void onInventoryClose(@NotNull InventoryCloseEvent inventoryCloseEvent) {
@@ -167,7 +156,7 @@ public abstract class AbstractMenu implements InventoryHolder {
         // override
     }
 
-    protected void onClick(@NotNull InventoryClickEvent inventoryClickEvent, @Nullable String tag) {
+    protected void onClick(@NotNull InventoryClickEvent inventoryClickEvent, @NotNull String tag) {
         // override
     }
 

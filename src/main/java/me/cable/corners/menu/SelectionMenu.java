@@ -1,20 +1,17 @@
 package me.cable.corners.menu;
 
 import me.cable.corners.CableCorners;
-import me.cable.corners.component.Message;
-import me.cable.corners.component.region.Coords;
 import me.cable.corners.component.region.Platform;
 import me.cable.corners.component.region.Venue;
 import me.cable.corners.manager.VenueManager;
 import me.cable.corners.util.ItemUtils;
-import me.cable.corners.util.Utils;
-import org.bukkit.*;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -97,7 +94,7 @@ public class SelectionMenu extends AbstractMenu {
             Platform platform = venue.getPlatforms().get(i);
             Material material = platform.getMaterial();
             String name = platform.getName();
-            ItemStack item = ItemUtils.item(material, Utils.format(name));
+            ItemStack item = ItemUtils.item(material, name);
 
             for (int slot : materialSlots[i]) {
                 inventory.setItem(slot, item);
@@ -118,7 +115,7 @@ public class SelectionMenu extends AbstractMenu {
                     previous = ItemUtils.item(Material.GRAY_DYE, ChatColor.GRAY + "" + ChatColor.BOLD + "Previous Page");
                 }
 
-                inventory.setItem(15, previous);
+                inventory.setItem(24, previous);
             }
             {
                 ItemStack next;
@@ -131,19 +128,20 @@ public class SelectionMenu extends AbstractMenu {
                 }
 
                 setTag(next, "NEXT");
-                inventory.setItem(16, next);
+                inventory.setItem(25, next);
             }
         }
         {
             ItemStack edit = ItemUtils.item(Material.LIME_DYE, ChatColor.GREEN + "" + ChatColor.BOLD + "Edit",
                     Utils.listOf(ChatColor.GRAY + "Click to edit this venue."));
             setTag(edit, "EDIT");
-            inventory.setItem(24, edit);
+            inventory.setItem(33, edit);
         }
         {
             ItemStack remove = ItemUtils.item(Material.RED_DYE, ChatColor.RED + "" + ChatColor.BOLD + "Remove",
                     Utils.listOf(ChatColor.GRAY + "Click to remove this venue."));
             setTag(remove, "REMOVE");
+<<<<<<< HEAD
             inventory.setItem(25, remove);
         }
         {
@@ -156,6 +154,9 @@ public class SelectionMenu extends AbstractMenu {
                     Utils.listOf(ChatColor.GRAY + "Click to teleport to this venue."));
             setTag(teleport, "TELEPORT");
             inventory.setItem(43, teleport);
+=======
+            inventory.setItem(34, remove);
+>>>>>>> parent of 3d5a745 (Visual updates)
         }
     }
 
@@ -172,6 +173,7 @@ public class SelectionMenu extends AbstractMenu {
     }
 
     @Override
+<<<<<<< HEAD
     protected void onClick(@NotNull InventoryClickEvent e, @Nullable String tag) {
         if (tag == null) return;
         if (!(e.getWhoClicked() instanceof Player)) return;
@@ -184,16 +186,13 @@ public class SelectionMenu extends AbstractMenu {
                 break;
             }
             case "NEXT": {
-                int index = getIndex();
+=======
+    protected void onClick(@NotNull InventoryClickEvent e, @NotNull String tag) {
+        if (!(e.getWhoClicked() instanceof Player player)) return;
 
-                if (hasNext()) {
-                    Venue venue = getVenues().get(index + 1);
-                    new SelectionMenu(player, venue, cableCorners).open();
-                }
-
-                break;
-            }
-            case "PREVIOUS": {
+        switch (tag) {
+            case "PREVIOUS" -> {
+>>>>>>> parent of 3d5a745 (Visual updates)
                 int index = getIndex();
 
                 if (index > 0) {
@@ -203,6 +202,21 @@ public class SelectionMenu extends AbstractMenu {
 
                 break;
             }
+<<<<<<< HEAD
+            case "PREVIOUS": {
+=======
+            case "NEXT" -> {
+>>>>>>> parent of 3d5a745 (Visual updates)
+                int index = getIndex();
+
+                if (hasNext()) {
+                    Venue venue = getVenues().get(index + 1);
+                    new SelectionMenu(player, venue, cableCorners).open();
+                }
+
+                break;
+            }
+<<<<<<< HEAD
             case "REMOVE": {
                 VenueManager.unregisterAndRemoveVenue(venue);
                 break;
@@ -225,6 +239,13 @@ public class SelectionMenu extends AbstractMenu {
                 }
 
                 break;
+=======
+            case "EDIT" -> new EditingMenu(player, venue, cableCorners).open();
+            case "REMOVE" -> {
+                int index = getIndex();
+                VenueManager.unregisterAndRemoveVenue(venue);
+                onVenueRemove(venue, index);
+>>>>>>> parent of 3d5a745 (Visual updates)
             }
         }
     }
