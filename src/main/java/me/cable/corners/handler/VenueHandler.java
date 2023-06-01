@@ -1,4 +1,4 @@
-package me.cable.corners.manager;
+package me.cable.corners.handler;
 
 import me.cable.corners.component.region.Venue;
 import me.cable.corners.menu.EditingMenu;
@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-public final class VenueManager {
+public final class VenueHandler {
 
     private static final Map<Integer, Venue> venues = new HashMap<>();
 
@@ -65,7 +65,7 @@ public final class VenueManager {
 
         int index = getIndex(venue);
 
-        EditingMenu.closeOfVenue(venue);
+        EditingMenu.closeWithVenue(venue);
         SelectionMenu.onVenueRemove(venue, index);
     }
 

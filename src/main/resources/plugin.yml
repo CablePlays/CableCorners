@@ -1,5 +1,5 @@
-name: ${project.name}
-main: ${project.groupId}.${project.artifactId}.${project.name}
+name: CableCorners
+main: me.cable.corners.CableCorners
 
 version: ${project.version}
 api-version: 1.16
@@ -9,4 +9,4 @@ author: Cable
 commands:
   cablecorners:
     aliases: [ cc, ccorners ]
-    permission: cablecorners.admin
+    permission: cablecorners.command.cablecorners

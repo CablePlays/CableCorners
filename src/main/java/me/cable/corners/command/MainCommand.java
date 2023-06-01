@@ -1,14 +1,14 @@
 package me.cable.corners.command;
 
 import me.cable.corners.CableCorners;
+import me.cable.corners.component.Coords;
 import me.cable.corners.component.Message;
-import me.cable.corners.component.region.Coords;
 import me.cable.corners.component.region.Venue;
 import me.cable.corners.handler.Messages;
-import me.cable.corners.handler.SaveHandler;
-import me.cable.corners.manager.VenueManager;
-import me.cable.corners.menu.AbstractMenu;
+import me.cable.corners.handler.SavesHandler;
+import me.cable.corners.handler.VenueHandler;
 import me.cable.corners.menu.EditingMenu;
+import me.cable.corners.menu.Menu;
 import me.cable.corners.menu.SelectionMenu;
 import org.bukkit.block.Block;
 import org.bukkit.command.*;
@@ -24,13 +24,13 @@ public class MainCommand implements CommandExecutor, TabCompleter {
 
     private final CableCorners cableCorners;
     private final Messages messages;
-    private final SaveHandler saveHandler;
+    private final SavesHandler savesHandler;
 
     public MainCommand(@NotNull CableCorners cableCorners) {
         this.cableCorners = cableCorners;
 
         messages = cableCorners.getMessages();
-        saveHandler = cableCorners.getSaveHandler();
+        savesHandler = cableCorners.getSavesHandler();
     }
 
     public void register(@NotNull String string) {
@@ -66,8 +66,8 @@ public class MainCommand implements CommandExecutor, TabCompleter {
                 }
 
                 Block centre = player.getLocation().getBlock();
-                Venue venue = new Venue(VenueManager.getNextFreeId(), 3, 3, Coords.fromBlock(centre), centre.getWorld().getName(), null);
-                VenueManager.registerVenue(venue);
+                Venue venue = new Venue(VenueHandler.getNextFreeId(), 3, 2, Coords.fromBlock(centre), centre.getWorld().getName(), null);
+                VenueHandler.registerVenue(venue);
 
                 message("create").send(sender);
             }
@@ -77,9 +77,9 @@ public class MainCommand implements CommandExecutor, TabCompleter {
                     return true;
                 }
 
-                for (Venue venue : VenueManager.getVenues()) {
-                    if (venue.contains(player)) {
-                        new EditingMenu(player, venue, false, cableCorners).open();
+                for (Venue venue : VenueHandler.getVenues()) {
+                    if (venue.contains(player, 5)) {
+                        new EditingMenu(cableCorners, player, venue).open();
                         return true;
                     }
                 }
@@ -88,30 +88,33 @@ public class MainCommand implements CommandExecutor, TabCompleter {
             }
             case "help" -> message("help").placeholder("{command}", label).send(sender);
             case "load" -> {
-                AbstractMenu.closeMenus(EditingMenu.class);
-                AbstractMenu.closeMenus(SelectionMenu.class);
+                Menu.closeMenus(EditingMenu.class);
+                Menu.closeMenus(SelectionMenu.class);
 
-                VenueManager.unregisterAndRemoveVenues();
-                saveHandler.loadVenues();
+                VenueHandler.unregisterAndRemoveVenues();
+                savesHandler.loadVenues();
 
                 message("load").send(sender);
             }
             case "reload" -> {
+                long millis = System.currentTimeMillis();
                 messages.load();
-                message("reload").send(sender);
+                message("reload")
+                        .placeholder("{milliseconds}", Long.toString(System.currentTimeMillis() - millis))
+                        .send(sender);
             }
             case "save" -> {
-                saveHandler.saveVenues();
+                savesHandler.saveVenues();
                 message("save").send(sender);
             }
             case "venues" -> {
                 if (sender instanceof Player player) {
-                    List<Venue> list = VenueManager.getVenues();
+                    List<Venue> list = VenueHandler.getVenues();
 
                     if (list.isEmpty()) {
                         message("venues.no-venues").send(sender);
                     } else {
-                        new SelectionMenu(player, list.get(0), cableCorners).open();
+                        new SelectionMenu(cableCorners, player, list.get(0)).open();
                         message("venues.open").send(sender);
                     }
                 } else {

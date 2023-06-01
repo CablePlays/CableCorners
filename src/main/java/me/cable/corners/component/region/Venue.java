@@ -1,8 +1,10 @@
 package me.cable.corners.component.region;
 
 import me.cable.corners.component.AdvancedBlockFace;
+import me.cable.corners.component.Coords;
 import me.cable.corners.component.GameState;
-import me.cable.corners.helper.DefaultValues;
+import me.cable.corners.util.DefaultValues;
+import me.cable.corners.util.Utils;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;
@@ -10,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class Venue extends Region {
 
@@ -17,28 +20,29 @@ public class Venue extends Region {
 
     private final int id;
     private final List<Platform> platforms;
+    private final List<UUID> alivePlayers = new ArrayList<>();
 
     private boolean active = false;
 
     private int size;
     private int space;
-    private Coords centre;
+    private Coords center;
 
     private int countdownDuration = 10;
     private int eliminationDuration = 5;
-    private int replacementDuration = 5;
+    private int replacementDuration = 3;
 
     private GameState gameState = GameState.START;
     private int time;
     private boolean taskComplete = false;
 
-    public Venue(int id, int size, int space, @NotNull Coords centre, @NotNull String world, @Nullable List<Platform> platforms) {
+    public Venue(int id, int size, int space, @NotNull Coords center, @NotNull String world, @Nullable List<Platform> platforms) {
         super(world);
 
         this.id = id;
         this.size = Math.max(size, 1);
         this.space = Math.max(space, 0);
-        this.centre = centre;
+        this.center = center;
 
         if (platforms == null) {
             DefaultValues defaultValues = new DefaultValues();
@@ -52,9 +56,13 @@ public class Venue extends Region {
             }
         }
 
-        this.platforms = platforms;
+        if (platforms.size() != 4) {
+            throw new IllegalArgumentException("List does not have 4 platforms");
+        }
 
-        updateProperties();
+        this.platforms = List.copyOf(platforms);
+
+        updateSizes();
         placePlatforms();
     }
 
@@ -62,10 +70,10 @@ public class Venue extends Region {
         List<Platform> platforms = new ArrayList<>();
         String world = configurationSection.getString("world", "world");
 
-        for (int i = 1; i <= PLATFORMS; i++) {
-            String materialString = configurationSection.getString("platforms." + i + ".material");
-            Material material = (materialString == null) ? null : Material.getMaterial(materialString);
-            Platform platform = new Platform(world, material == null ? Material.BEDROCK : material);
+        for (int i = 0; i < PLATFORMS; i++) {
+            Material material = Utils.materialFromString(
+                    configurationSection.getString("platforms." + i + ".material"), Material.BEDROCK);
+            Platform platform = new Platform(world, material);
             platform.setName(configurationSection.getString("platforms." + i + ".name"));
             platforms.add(platform);
         }
@@ -97,9 +105,9 @@ public class Venue extends Region {
         configurationSection.set("platform-size", size);
         configurationSection.set("platform-space", space);
 
-        configurationSection.set("x", centre.getX());
-        configurationSection.set("y", centre.getY());
-        configurationSection.set("z", centre.getZ());
+        configurationSection.set("x", center.getX());
+        configurationSection.set("y", center.getY());
+        configurationSection.set("z", center.getZ());
         configurationSection.set("world", world);
 
         configurationSection.set("durations.countdown-duration", countdownDuration);
@@ -107,7 +115,7 @@ public class Venue extends Region {
         configurationSection.set("durations.replacement-duration", replacementDuration);
 
         for (Platform platform : platforms) {
-            int i = platforms.indexOf(platform) + 1;
+            int i = platforms.indexOf(platform);
             ConfigurationSection a = configurationSection.createSection("platforms." + i);
 
             a.set("material", platform.getMaterial().toString());
@@ -115,35 +123,49 @@ public class Venue extends Region {
         }
     }
 
-    private void updateProperties() {
-        setCoords(centre.add(space + size, 5, space + size), centre.subtract(space + size, 5, space + size));
-
-        int move = space / 2 + 1;
-        int two = move + size - 1;
-
+    private void updateSizes() {
+        int innerMove = (space + 1) / 2;
+        int outerMove = innerMove + size - 1;
         boolean odd = (space & 1) == 1;
+
+        setCoords(center.add(outerMove, 10, outerMove),
+                center.subtract(outerMove + (odd ? 0 : 1), 0, outerMove + (odd ? 0 : 1)));
 
         for (int i = 0; i < PLATFORMS; i++) {
             Platform platform = platforms.get(i);
             AdvancedBlockFace a = AdvancedBlockFace.values()[i];
 
-            platform.setCoords(
-                    centre.getRelative(a.blockFace1(), move - a.subtract1(odd)).getRelative(a.blockFace2(), move - a.subtract2(odd)),
-                    centre.getRelative(a.blockFace1(), two - a.subtract1(odd)).getRelative(a.blockFace2(), two - a.subtract2(odd))
-            );
+            Coords corner1;
+            Coords corner2;
+
+            if (odd) {
+                corner1 = center.getRelative(a.blockFace1(), innerMove).getRelative(a.blockFace2(), innerMove);
+                corner2 = center.getRelative(a.blockFace1(), outerMove).getRelative(a.blockFace2(), outerMove);
+            } else {
+                corner1 = center.getRelative(a.blockFace1(), innerMove + (a.evenMove1() ? 1 : 0))
+                        .getRelative(a.blockFace2(), innerMove + (a.evenMove2() ? 1 : 0));
+                corner2 = center.getRelative(a.blockFace1(), outerMove + (a.evenMove1() ? 1 : 0))
+                        .getRelative(a.blockFace2(), outerMove + (a.evenMove2() ? 1 : 0));
+            }
+
+            platform.setCoords(corner1, corner2);
         }
     }
 
     public @NotNull List<Platform> getPlatforms() {
-        if (platforms.size() < 4) {
-            throw new IllegalStateException("Venue has less than 4 platforms");
-        }
-
         return platforms;
+    }
+
+    public @NotNull List<UUID> getAlivePlayers() {
+        return alivePlayers;
     }
 
     public @NotNull Platform selectPlatform() {
         return getPlatforms().get((int) (Math.random() * PLATFORMS));
+    }
+
+    public int getPlatformId(@NotNull Platform platform) {
+        return getPlatforms().indexOf(platform);
     }
 
     public void placePlatforms() {
@@ -154,9 +176,10 @@ public class Venue extends Region {
         platforms.forEach(Platform::remove);
     }
 
-    public void setWorld(@NotNull String world) {
-        super.setWorld(world, true);
-        platforms.forEach(a -> a.setWorld(world, true));
+    @Override
+    public void setWorldName(@NotNull String world) {
+        super.setWorldName(world);
+        platforms.forEach(a -> a.setWorldName(world));
     }
 
     public int getId() {
@@ -169,7 +192,7 @@ public class Venue extends Region {
 
     public void setSize(int size) {
         this.size = size;
-        updateProperties();
+        updateSizes();
     }
 
     public int getSpace() {
@@ -178,16 +201,16 @@ public class Venue extends Region {
 
     public void setSpace(int space) {
         this.space = space;
-        updateProperties();
+        updateSizes();
     }
 
-    public @NotNull Coords getCentre() {
-        return centre;
+    public @NotNull Coords getCenter() {
+        return center;
     }
 
-    public void setCentre(@NotNull Coords centre) {
-        this.centre = centre;
-        updateProperties();
+    public void setCenter(@NotNull Coords center) {
+        this.center = center;
+        updateSizes();
     }
 
     public boolean isActive() {
@@ -196,12 +219,11 @@ public class Venue extends Region {
 
     public void setActive(boolean active) {
         this.active = active;
+        placePlatforms();
 
         if (active) {
             setTime(getCountdownDuration());
             setGameState(GameState.START);
-        } else {
-            placePlatforms();
         }
     }
 
@@ -254,7 +276,7 @@ public class Venue extends Region {
         return taskComplete;
     }
 
-    public void completeTask() {
+    public void markTaskCompleted() {
         taskComplete = true;
     }
 }

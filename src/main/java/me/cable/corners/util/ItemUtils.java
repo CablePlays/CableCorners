@@ -10,33 +10,20 @@ import java.util.List;
 
 public final class ItemUtils {
 
-    public static @NotNull ItemStack item(@NotNull Material material, @Nullable String name, @Nullable List<String> lore) {
-        ItemStack itemStack = new ItemStack(material);
+    public static @NotNull ItemStack create(@NotNull Material material, @Nullable String name, @Nullable List<String> lore) {
+        ItemStack item = new ItemStack(material);
+        ItemMeta meta = item.getItemMeta();
 
-        ItemMeta itemMeta = itemStack.getItemMeta();
-
-        if (itemMeta != null) {
-            itemMeta.setDisplayName(name);
-            itemMeta.setLore(lore);
-            itemStack.setItemMeta(itemMeta);
+        if (meta != null) {
+            meta.setDisplayName(name);
+            meta.setLore(lore);
+            item.setItemMeta(meta);
         }
 
-        return itemStack;
+        return item;
     }
 
-    public static @NotNull ItemStack item(@NotNull Material material, @NotNull String name) {
-        return item(material, name, null);
-    }
-
-    public static @NotNull ItemStack item(@NotNull Material material) {
-        return item(material, null, null);
-    }
-
-    public static @NotNull ItemStack emptyItem(@NotNull Material material) {
-        return item(material, " ");
-    }
-
-    public static @NotNull ItemStack fillItem() {
-        return emptyItem(Material.BLACK_STAINED_GLASS_PANE);
+    public static @NotNull ItemStack create(@NotNull Material material, @Nullable String name) {
+        return create(material, name, null);
     }
 }

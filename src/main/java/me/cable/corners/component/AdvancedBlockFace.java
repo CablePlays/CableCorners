@@ -4,21 +4,23 @@ import org.bukkit.block.BlockFace;
 import org.jetbrains.annotations.NotNull;
 
 public enum AdvancedBlockFace {
-    SOUTH_EAST(BlockFace.SOUTH, BlockFace.EAST, 1, 1),
-    SOUTH_WEST(BlockFace.SOUTH, BlockFace.WEST, 1, 0),
-    NORTH_WEST(BlockFace.NORTH, BlockFace.WEST, 0, 0),
-    NORTH_EAST(BlockFace.NORTH, BlockFace.EAST, 0, 1);
+    SOUTH_EAST(BlockFace.SOUTH, BlockFace.EAST, false, false),
+    SOUTH_WEST(BlockFace.SOUTH, BlockFace.WEST, false, true),
+    NORTH_WEST(BlockFace.NORTH, BlockFace.WEST, true, true),
+    NORTH_EAST(BlockFace.NORTH, BlockFace.EAST, true, false);
 
     private final BlockFace blockFace1;
     private final BlockFace blockFace2;
-    private final int subtract1;
-    private final int subtract2;
 
-    AdvancedBlockFace(@NotNull BlockFace blockFace1, @NotNull BlockFace blockFace2, int subtract1, int subtract2) {
+    // if the platform should move extra on even space
+    private final boolean evenMove1;
+    private final boolean evenMove2;
+
+    AdvancedBlockFace(@NotNull BlockFace blockFace1, @NotNull BlockFace blockFace2, boolean evenMove1, boolean evenMove2) {
         this.blockFace1 = blockFace1;
         this.blockFace2 = blockFace2;
-        this.subtract1 = subtract1;
-        this.subtract2 = subtract2;
+        this.evenMove1 = evenMove1;
+        this.evenMove2 = evenMove2;
     }
 
     public BlockFace blockFace1() {
@@ -29,11 +31,11 @@ public enum AdvancedBlockFace {
         return blockFace2;
     }
 
-    public int subtract1(boolean odd) {
-        return (odd ? 0 : subtract1);
+    public boolean evenMove1() {
+        return evenMove1;
     }
 
-    public int subtract2(boolean odd) {
-        return (odd ? 0 : subtract2);
+    public boolean evenMove2() {
+        return evenMove2;
     }
 }

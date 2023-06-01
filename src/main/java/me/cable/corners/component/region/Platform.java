@@ -1,11 +1,10 @@
 package me.cable.corners.component.region;
 
-import me.cable.corners.util.Utils;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class Platform extends Region {
+public class Platform extends PlaceableRegion {
 
     private static final String DEFAULT_NAME = "N/A";
 
@@ -18,7 +17,7 @@ public class Platform extends Region {
     }
 
     public void fill() {
-        fill(getMaterial());
+        fill(material);
     }
 
     public @NotNull Material getMaterial() {

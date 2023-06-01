@@ -1,6 +1,6 @@
 package me.cable.corners.listener.inventory;
 
-import me.cable.corners.menu.AbstractMenu;
+import me.cable.corners.menu.Menu;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -13,8 +13,8 @@ public class InventoryClick implements Listener {
     private void event(@NotNull InventoryClickEvent e) {
         Inventory inventory = e.getInventory();
 
-        if (inventory.getHolder() instanceof AbstractMenu abstractMenu) {
-            abstractMenu.onInventoryClick(e);
+        if (inventory.getHolder() instanceof Menu menu) {
+            menu.onInventoryClick(e);
         }
     }
 }

@@ -1,4 +1,4 @@
-package me.cable.corners.helper;
+package me.cable.corners.util;
 
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;

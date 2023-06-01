@@ -14,7 +14,6 @@
 
 placeholders:
   error: "&c&l[CC]&c"
-  prefix: "&f[&b&lCable&d&lCorners&f] &9>&b"
   success: "&b&l[CC]&b"
 
 # ---------------------------------------------------------------------------------------------------- #
@@ -31,31 +30,33 @@ command:
       - "/{command} edit Opens the editing menu for the venue you are in"
       - "/{command} help Shows this message"
       - "/{command} load Loads venues from configuration"
-      - "/{command} menu Opens the selection menu"
       - "/{command} reload Reloads the plugin"
       - "/{command} save Saves venues to configuration"
+      - "/{command} venues Opens the selection menu"
     information: # {author} {command} {name} {version}
       - "&bServer running &9{name} v{version} &bby &9{author}"
       - "&bCommands: &9/{command} help"
     load:
       - "{success} Venues have been loaded from configuration."
-    reload:
-      - "{success} Configuration files reloaded successfully."
+    reload: # {milliseconds}
+      - "{success} Plugin reloaded in {milliseconds} ms."
     save:
       - "{success} Venues have been saved to configuration."
     unknown-command: # {command}
-      - "{prefix} Unknown sub-command. Type \"/{command} help\" for a list of commands."
+      - "{error} Unknown sub-command. Type \"/{command} help\" for a list of commands."
     venues:
       no-venues:
-        - "{prefix} No venues have been created!"
+        - "{error} No venues have been created!"
       open: [ ]
 
 error:
   only-player:
     - "{error} Only players may use this command!"
+  teleport-invalid-world:
+    - "{error} The world of that venue is invalid!"
 
 game:
   countdown: # Placeholders: {s} {seconds}
     - "&f[&b&lCountdown&f] &9> &bDestroying a platform in &d{seconds} &bsecond{s}"
   destroy: # Placeholders: {platform}
-    - "&f[&b&lElimination&f] &9> &b{platform} &bwas destroyed"
+    - "&f[&b&lElimination&f] &9> &bThe &6&l{platform} &bwas destroyed"

@@ -2,19 +2,18 @@ package me.cable.corners.handler;
 
 import me.cable.corners.CableCorners;
 import me.cable.corners.component.region.Venue;
-import me.cable.corners.manager.VenueManager;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
 
-public final class SaveHandler {
+public final class SavesHandler {
 
     private final CableCorners cableCorners;
     private final File file;
 
-    public SaveHandler(CableCorners cableCorners) {
+    public SavesHandler(CableCorners cableCorners) {
         this.cableCorners = cableCorners;
 
         File parent = cableCorners.getDataFolder();
@@ -41,7 +40,7 @@ public final class SaveHandler {
 
             if (configurationSection != null) {
                 Venue venue = Venue.load(configurationSection);
-                VenueManager.registerVenue(venue);
+                VenueHandler.registerVenue(venue);
             }
         }
     }
@@ -49,7 +48,7 @@ public final class SaveHandler {
     public void saveVenues() {
         YamlConfiguration yamlConfiguration = new YamlConfiguration();
 
-        for (Venue venue : VenueManager.getVenues()) {
+        for (Venue venue : VenueHandler.getVenues()) {
             int id = venue.getId();
             ConfigurationSection cs = yamlConfiguration.createSection(String.valueOf(id));
             venue.save(cs);
@@ -61,9 +60,5 @@ public final class SaveHandler {
             cableCorners.getLogger().severe("Could not save venues");
             e.printStackTrace();
         }
-    }
-
-    public void reloadVenues() {
-
     }
 }

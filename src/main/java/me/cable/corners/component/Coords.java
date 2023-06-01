@@ -1,12 +1,10 @@
-package me.cable.corners.component.region;
+package me.cable.corners.component;
 
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.Serializable;
-
-public class Coords implements Serializable {
+public class Coords {
 
     private final int x;
     private final int y;
@@ -56,7 +54,7 @@ public class Coords implements Serializable {
             case NORTH_WEST -> add(-a, 0, -a);
             case SOUTH_EAST -> add(a, 0, a);
             case SOUTH_WEST -> add(-a, 0, a);
-            default -> this;
+            default -> throw new IllegalArgumentException("Provided BlockFace is not allowed: " + blockFace);
         };
     }
 }

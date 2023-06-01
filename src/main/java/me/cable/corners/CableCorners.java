@@ -3,12 +3,13 @@ package me.cable.corners;
 import me.cable.corners.command.MainCommand;
 import me.cable.corners.component.region.Venue;
 import me.cable.corners.handler.Messages;
-import me.cable.corners.handler.SaveHandler;
+import me.cable.corners.handler.SavesHandler;
+import me.cable.corners.handler.VenueHandler;
 import me.cable.corners.listener.inventory.InventoryClick;
 import me.cable.corners.listener.inventory.InventoryClose;
 import me.cable.corners.listener.player.AsyncPlayerChat;
 import me.cable.corners.listener.player.PlayerQuit;
-import me.cable.corners.manager.VenueManager;
+import me.cable.corners.menu.EditingMenu;
 import me.cable.corners.thread.GameThread;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -16,7 +17,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public final class CableCorners extends JavaPlugin {
 
     private Messages messages;
-    private SaveHandler saveHandler;
+    private SavesHandler savesHandler;
 
     @Override
     public void onEnable() {
@@ -25,19 +26,19 @@ public final class CableCorners extends JavaPlugin {
         registerCommands();
         startThreads();
 
-        saveHandler.loadVenues();
+        savesHandler.loadVenues();
     }
 
     @Override
     public void onDisable() {
-        getServer().getScheduler().cancelTasks(this);
-        VenueManager.getVenues().forEach(Venue::removePlatforms);
-        saveHandler.saveVenues();
+        EditingMenu.closeMenus();
+        VenueHandler.getVenues().forEach(Venue::removePlatforms);
+        savesHandler.saveVenues();
     }
 
     private void initializeHandles() {
         messages = new Messages(this);
-        saveHandler = new SaveHandler(this);
+        savesHandler = new SavesHandler(this);
     }
 
     private void registerListeners() {
@@ -50,7 +51,7 @@ public final class CableCorners extends JavaPlugin {
 
         // Player
 
-        pluginManager.registerEvents(new AsyncPlayerChat(), this);
+        pluginManager.registerEvents(new AsyncPlayerChat(this), this);
         pluginManager.registerEvents(new PlayerQuit(), this);
     }
 
@@ -66,7 +67,7 @@ public final class CableCorners extends JavaPlugin {
         return messages;
     }
 
-    public SaveHandler getSaveHandler() {
-        return saveHandler;
+    public SavesHandler getSavesHandler() {
+        return savesHandler;
     }
 }

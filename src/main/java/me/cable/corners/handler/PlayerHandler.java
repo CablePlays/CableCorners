@@ -1,4 +1,4 @@
-package me.cable.corners.manager;
+package me.cable.corners.handler;
 
 import me.cable.corners.component.region.Platform;
 import me.cable.corners.component.region.Venue;
@@ -8,8 +8,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
-public final class PlayerManager {
+public final class PlayerHandler {
 
     private static final Map<Player, EditingNameEntry> editingName = new HashMap<>();
 
@@ -25,7 +26,7 @@ public final class PlayerManager {
         return editingName.get(player);
     }
 
-    public record EditingNameEntry(Venue venue, Platform platform) implements Map.Entry<Venue, Platform> {
+    public record EditingNameEntry(@NotNull Venue venue, @NotNull Platform platform) implements Entry<Venue, Platform> {
 
         @Override
         public @NotNull Venue getKey() {
